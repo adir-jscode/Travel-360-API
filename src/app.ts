@@ -3,7 +3,7 @@ const app = express();
 
 app.get("/", (req, res) => {
   res.status(200).json({
-    message: "Welcome to travel-360 backend",
+    message: "Welcome to travel-360 backend 🚀",
   });
 });
 

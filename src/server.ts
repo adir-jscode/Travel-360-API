@@ -1,18 +1,19 @@
 import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
+import { envVars } from "./app/config/env";
 let server: Server;
 
 const startServer = async () => {
   try {
-    await mongoose.connect(
-      "mongodb+srv://travel-360:travel-360@travel-360.glkqyae.mongodb.net/travel-360DB?appName=travel-360"
-    );
-    console.log("Connected to Travel-360 DB!");
-    server = app.listen(5000, () => {
-      console.log("app is listing");
+    await mongoose.connect(envVars.DB_URL);
+    console.log("Connected to Travel-360 DB! 🛫 ");
+    server = app.listen(envVars.PORT, () => {
+      console.log(`app is listening to http://localhost:${envVars.PORT}/ `);
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 startServer();
