@@ -17,21 +17,23 @@ const userSchema = new Schema<IUser>(
     name: { type: string, required: true },
     email: { type: string, required: true, unique: true },
     password: { type: string },
-    role: {
-      type: string,
-      enum: Object.values(Role),
-      default: Role.USER,
-    },
-    phone: { type: String },
     picture: { type: String },
-    address: { type: String },
-    isDeleted: { type: Boolean, default: false },
+    bio: { type: String },
+    travelInterest: { type: String, required: true },
+    visitedCountries: { type: String, required: true },
+    currentLocation: { type: String },
     isActive: {
       type: String,
       enum: Object.values(IsActive),
       default: IsActive.ACTIVE,
     },
     isVerified: { type: Boolean, default: false },
+    role: {
+      type: string,
+      enum: Object.values(Role),
+      default: Role.USER,
+    },
+
     auths: [authProviderSchema],
   },
   {
