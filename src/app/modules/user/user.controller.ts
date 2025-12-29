@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
-import { sendResponse } from "../../../utils/sendResponse.ts";
+import { NextFunction, Request, Response } from "express";
+import { sendResponse } from "../../../utils/sendResponse";
 import { UserServices } from "./user.service";
 
-const createUser = async (req: Request, res: Response) => {
+//register user
+const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await UserServices.createUser(req.body);
     sendResponse(res, {
@@ -11,21 +12,29 @@ const createUser = async (req: Request, res: Response) => {
       message: "User created successfully",
       data: user,
     });
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };
 
-//profile
-const getUserProfile = async (req: Request, res: Response) => {
+// user profile
+const getUserProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const userId = req.params.id;
-    console.log(userId);
+    const profile = await UserServices.getUserProfile(userId);
     sendResponse(res, {
       success: true,
       statusCode: 200,
       message: "User profile fetched successfully",
-      data: user,
+      data: profile,
     });
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const UserControllers = {

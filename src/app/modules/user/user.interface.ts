@@ -16,12 +16,12 @@ export interface IAuthProvider {
 export interface IUser {
   name: string;
   email: string;
-  password?: string;
+  password: string;
   picture?: string;
   bio?: string;
-  travelInterest: string[];
-  visitedCountries: string[];
-  currentLocation?: string;
+  travelInterest?: string[];
+  visitedCountries?: string[];
+  currentLocation: string;
   isActive?: IsActive;
   isVerified?: boolean;
   isPremium?: boolean;

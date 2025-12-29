@@ -1,14 +1,14 @@
-import { Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 import { IDestination, ITravelPlan, TravelType } from "./travelPlan.interface";
 
 const destinationSchema = new Schema<IDestination>(
   {
-    country: { type: string, required: true },
-    city: { type: string, required: true },
+    country: { type: String, required: true },
+    city: { type: String, required: true },
   },
   {
     timestamps: true,
-    versionKey: fale,
+    versionKey: false,
   }
 );
 
@@ -17,16 +17,19 @@ const travelPlanSchema = new Schema<ITravelPlan>(
     destination: destinationSchema,
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
-    budgetRange: { type: string, required: true },
+    budgetMin: { type: Number, required: true },
+    budgetMax: { type: Number, required: true },
     travelType: {
-      type: string,
+      type: String,
       enum: Object.values(TravelType),
       default: TravelType.FRIENDS,
     },
-    itinerary: { type: string },
+    itinerary: { type: String },
   },
   {
     timestamps: true,
-    versionKey: fale,
+    versionKey: false,
   }
 );
+
+export const TravelPlan = model<ITravelPlan>("TravelPlan", travelPlanSchema);

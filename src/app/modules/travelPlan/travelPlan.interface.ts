@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export interface IDestination {
   country: string;
   city: string;
@@ -16,8 +18,8 @@ export enum Visibility {
 export interface ITravelPlan {
   user: Types.ObjectId;
   destination: IDestination;
-  startDate: date;
-  endDate: date;
+  startDate: Date;
+  endDate: Date;
   budgetMin: number;
   budgetMax: number;
   travelType: TravelType;
