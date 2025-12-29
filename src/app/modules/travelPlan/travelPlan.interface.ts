@@ -8,12 +8,19 @@ export enum TravelType {
   FAMILY = "FAMILY",
   FRIENDS = "FRIENDS",
 }
+export enum Visibility {
+  PUBLIC = "PUBLIC",
+  PRIVATE = "PRIVATE",
+}
 
 export interface ITravelPlan {
+  user: Types.ObjectId;
   destination: IDestination;
   startDate: date;
   endDate: date;
-  budgetRange: string;
+  budgetMin: number;
+  budgetMax: number;
   travelType: TravelType;
   itinerary?: string;
+  visibility: Visibility;
 }

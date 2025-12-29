@@ -24,6 +24,9 @@ export interface IUser {
   currentLocation?: string;
   isActive?: IsActive;
   isVerified?: boolean;
+  isPremium?: boolean;
+  avgRating?: number;
+  reviewCount?: number;
   role: Role;
   auths: IAuthProvider[];
 }

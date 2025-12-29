@@ -1,10 +1,10 @@
-import { Schema } from "mongoose";
-import { IAuthProvider, IUser, Role } from "./user.interface";
+import { model, Schema } from "mongoose";
+import { IAuthProvider, IsActive, IUser, Role } from "./user.interface";
 
 const authProviderSchema = new Schema<IAuthProvider>(
   {
-    provider: { type: string },
-    providerId: { type: string },
+    provider: { type: String },
+    providerId: { type: String },
   },
   {
     timestamps: true,
@@ -14,9 +14,9 @@ const authProviderSchema = new Schema<IAuthProvider>(
 
 const userSchema = new Schema<IUser>(
   {
-    name: { type: string, required: true },
-    email: { type: string, required: true, unique: true },
-    password: { type: string },
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String },
     picture: { type: String },
     bio: { type: String },
     travelInterest: { type: String, required: true },
@@ -29,7 +29,7 @@ const userSchema = new Schema<IUser>(
     },
     isVerified: { type: Boolean, default: false },
     role: {
-      type: string,
+      type: String,
       enum: Object.values(Role),
       default: Role.USER,
     },
