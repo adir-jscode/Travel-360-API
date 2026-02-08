@@ -1,8 +1,14 @@
 import { Router } from "express";
+import { validateRequest } from "../../middlewares/validateRequest";
 import { UserControllers } from "./user.controller";
+import { createUserZodSchema } from "./user.validation";
 const router = Router();
 
-router.post("/register", UserControllers.createUser);
+router.post(
+  "/register",
+  validateRequest(createUserZodSchema),
+  UserControllers.createUser,
+);
 router.get("/profile/:id", UserControllers.getUserProfile);
 
 export const UserRoutes = router;
