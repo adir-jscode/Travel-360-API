@@ -10,13 +10,13 @@ export enum Role {
 }
 
 export interface IAuthProvider {
-  provider: string;
+  provider: "GOOGLE" | "CREDENTIAL";
   providerId: string;
 }
 export interface IUser {
   name: string;
   email: string;
-  password: string;
+  password?: string;
   picture?: string;
   bio?: string;
   travelInterest?: string[];
