@@ -1,35 +1,46 @@
-import { model, Schema } from "mongoose";
-import { IDestination, ITravelPlan, TravelType } from "./travelPlan.interface";
+import mongoose from "mongoose";
 
-const destinationSchema = new Schema<IDestination>(
+const travelPlanSchema = new mongoose.Schema(
   {
-    country: { type: String, required: true },
-    city: { type: String, required: true },
-  },
-  {
-    timestamps: true,
-    versionKey: false,
-  }
-);
+    destination: String,
+    days: Number,
+    slug: { type: String, unique: true },
 
-const travelPlanSchema = new Schema<ITravelPlan>(
-  {
-    destination: destinationSchema,
-    startDate: { type: Date, required: true },
-    endDate: { type: Date, required: true },
-    budgetMin: { type: Number, required: true },
-    budgetMax: { type: Number, required: true },
-    travelType: {
-      type: String,
-      enum: Object.values(TravelType),
-      default: TravelType.FRIENDS,
+    title: String,
+    description: String,
+
+    highlights: [
+      {
+        title: String,
+        description: String,
+      },
+    ],
+
+    itinerary: [
+      {
+        day: Number,
+        title: String,
+        activities: [String],
+      },
+    ],
+
+    images: {
+      hero: String,
+      gallery: [String],
     },
-    itinerary: { type: String },
+
+    meta: {
+      metaTitle: String,
+      metaDescription: String,
+      metaImage: String,
+    },
+
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
-  {
-    timestamps: true,
-    versionKey: false,
-  }
+  { timestamps: true },
 );
 
-export const TravelPlan = model<ITravelPlan>("TravelPlan", travelPlanSchema);
+module.exports = mongoose.model("TravelPlan", travelPlanSchema);
