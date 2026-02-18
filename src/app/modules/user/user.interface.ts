@@ -5,8 +5,10 @@ export enum IsActive {
 }
 
 export enum Role {
+  SUPER_ADMIN = "SUPER_ADMIN",
   ADMIN = "ADMIN",
   USER = "USER",
+  GUIDE = "GUIDE",
 }
 
 export interface IAuthProvider {
@@ -17,11 +19,12 @@ export interface IUser {
   name: string;
   email: string;
   password?: string;
+  phone?: string;
   picture?: string;
   bio?: string;
   travelInterest?: string[];
   visitedCountries?: string[];
-  currentLocation: string;
+  currentLocation?: string;
   isActive?: IsActive;
   isVerified?: boolean;
   isPremium?: boolean;

@@ -22,6 +22,13 @@ export const createUserZodSchema = z.object({
     .regex(/^(?=.*\d)/, {
       message: "Password must contain at least 1 number.",
     }),
+  phone: z
+    .string({ error: "Phone Number must be string" })
+    .regex(/^(?:\+8801\d{9}|01\d{9})$/, {
+      message:
+        "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX",
+    })
+    .optional(),
   currentLocation: z
     .string({ error: "current Location must be string" })
     .min(2, { message: "current Location must be at least 2 characters long." })

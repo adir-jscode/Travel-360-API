@@ -8,6 +8,9 @@ interface EnvConfig {
   JWT_SECRET: string;
   ACCESS_TOKEN_EXPIRE: string;
   GEMINI_API_KEY: string;
+  BCRYPT_SALT_ROUND: string;
+  SUPER_ADMIN_EMAIL: string;
+  SUPER_ADMIN_PASSWORD: string;
   NODE_ENV: "development" | "production";
 }
 
@@ -18,6 +21,9 @@ const loadEnvVariables = (): EnvConfig => {
     "JWT_SECRET",
     "ACCESS_TOKEN_EXPIRE",
     "GEMINI_API_KEY",
+    "BCRYPT_SALT_ROUND",
+    "SUPER_ADMIN_EMAIL",
+    "SUPER_ADMIN_PASSWORD",
     "NODE_ENV",
   ];
 
@@ -33,6 +39,9 @@ const loadEnvVariables = (): EnvConfig => {
     JWT_SECRET: process.env.JWT_SECRET as string,
     ACCESS_TOKEN_EXPIRE: process.env.ACCESS_TOKEN_EXPIRE as string,
     GEMINI_API_KEY: process.env.GEMINI_API_KEY as string,
+    BCRYPT_SALT_ROUND: process.env.BCRYPT_SALT_ROUND as string,
+    SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL as string,
+    SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string,
     NODE_ENV: process.env.NODE_ENV as "development" | "production",
   };
 };

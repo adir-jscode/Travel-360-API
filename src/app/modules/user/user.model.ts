@@ -7,7 +7,7 @@ const authProviderSchema = new Schema<IAuthProvider>(
     providerId: { type: String },
   },
   {
-    timestamps: false,
+    _id: false,
     versionKey: false,
   },
 );
@@ -17,11 +17,12 @@ const userSchema = new Schema<IUser>(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String },
+    phone: { type: String },
     picture: { type: String },
     bio: { type: String },
     travelInterest: { type: String },
     visitedCountries: { type: String },
-    currentLocation: { type: String, required: true },
+    currentLocation: { type: String },
     isActive: {
       type: String,
       enum: Object.values(IsActive),

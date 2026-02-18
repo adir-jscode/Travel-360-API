@@ -1,4 +1,5 @@
 import bcryptjs from "bcryptjs";
+import { envVars } from "../../config/env";
 import AppError from "../../errorHelpers/AppError";
 import { IAuthProvider, IUser } from "./user.interface";
 import { User } from "./user.model";
@@ -12,7 +13,10 @@ const createUser = async (payload: Partial<IUser>) => {
   }
 
   //hashing password
-  const hashedPassword = await bcryptjs.hash(password as string, 10);
+  const hashedPassword = await bcryptjs.hash(
+    password as string,
+    Number(envVars.BCRYPT_SALT_ROUND),
+  );
 
   const authProvider: IAuthProvider = {
     provider: "CREDENTIAL",
