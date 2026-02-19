@@ -19,6 +19,26 @@ const credentialLogin = catchAsync(
     });
   },
 );
+const logout = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "User logged out successfully",
+      data: null,
+    });
+  },
+);
 const getNewAccessToken = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken;
@@ -35,4 +55,4 @@ const getNewAccessToken = catchAsync(
   },
 );
 
-export const AuthControllers = { credentialLogin, getNewAccessToken };
+export const AuthControllers = { credentialLogin, getNewAccessToken, logout };
