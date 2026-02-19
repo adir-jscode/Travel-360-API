@@ -7,6 +7,8 @@ interface EnvConfig {
   DB_URL: string;
   JWT_SECRET: string;
   ACCESS_TOKEN_EXPIRE: string;
+  JWT_REFRESH_SECRET: string;
+  REFRESH_TOKEN_EXPIRE: string;
   GEMINI_API_KEY: string;
   BCRYPT_SALT_ROUND: string;
   SUPER_ADMIN_EMAIL: string;
@@ -20,6 +22,8 @@ const loadEnvVariables = (): EnvConfig => {
     "DB_URL",
     "JWT_SECRET",
     "ACCESS_TOKEN_EXPIRE",
+    "JWT_REFRESH_SECRET",
+    "REFRESH_TOKEN_EXPIRE",
     "GEMINI_API_KEY",
     "BCRYPT_SALT_ROUND",
     "SUPER_ADMIN_EMAIL",
@@ -38,6 +42,8 @@ const loadEnvVariables = (): EnvConfig => {
     DB_URL: process.env.DB_URL as string,
     JWT_SECRET: process.env.JWT_SECRET as string,
     ACCESS_TOKEN_EXPIRE: process.env.ACCESS_TOKEN_EXPIRE as string,
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET as string,
+    REFRESH_TOKEN_EXPIRE: process.env.REFRESH_TOKEN_EXPIRE as string,
     GEMINI_API_KEY: process.env.GEMINI_API_KEY as string,
     BCRYPT_SALT_ROUND: process.env.BCRYPT_SALT_ROUND as string,
     SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL as string,

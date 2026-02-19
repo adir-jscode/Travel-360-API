@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export enum IsActive {
   ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
@@ -16,6 +18,7 @@ export interface IAuthProvider {
   providerId: string;
 }
 export interface IUser {
+  _id: Types.ObjectId;
   name: string;
   email: string;
   password?: string;
@@ -26,6 +29,7 @@ export interface IUser {
   visitedCountries?: string[];
   currentLocation?: string;
   isActive?: IsActive;
+  isDeleted?: boolean;
   isVerified?: boolean;
   isPremium?: boolean;
   avgRating?: number;

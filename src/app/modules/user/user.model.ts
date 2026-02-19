@@ -29,6 +29,7 @@ const userSchema = new Schema<IUser>(
       default: IsActive.ACTIVE,
     },
     isVerified: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
     role: {
       type: String,
       enum: Object.values(Role),
