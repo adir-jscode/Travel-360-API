@@ -37,7 +37,26 @@ const getUserProfile = async (
   }
 };
 
+const updateUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.params.id;
+    const decodedToken = req.user;
+    const updatedUserInfo = await UserServices.updateUser(
+      userId,
+      req.body,
+      decodedToken,
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "User information updated successfully",
+      data: updatedUserInfo,
+    });
+  },
+);
+
 export const UserControllers = {
   createUser,
   getUserProfile,
+  updateUser,
 };

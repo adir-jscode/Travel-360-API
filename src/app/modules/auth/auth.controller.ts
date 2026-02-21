@@ -55,4 +55,23 @@ const getNewAccessToken = catchAsync(
   },
 );
 
-export const AuthControllers = { credentialLogin, getNewAccessToken, logout };
+const resetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { oldPassword, newPassword } = req.body;
+    const decodedToken = req.user;
+    await AuthServices.resetPassword(oldPassword, newPassword, decodedToken);
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Password Changed Successfully",
+      data: null,
+    });
+  },
+);
+
+export const AuthControllers = {
+  credentialLogin,
+  getNewAccessToken,
+  logout,
+  resetPassword,
+};

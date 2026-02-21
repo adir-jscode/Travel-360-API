@@ -1,7 +1,8 @@
 import bcryptjs from "bcryptjs";
+import { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../../config/env";
 import AppError from "../../errorHelpers/AppError";
-import { IAuthProvider, IUser } from "./user.interface";
+import { IAuthProvider, IUser, Role } from "./user.interface";
 import { User } from "./user.model";
 
 const createUser = async (payload: Partial<IUser>) => {
@@ -48,4 +49,44 @@ const getUserProfile = async (userId: string) => {
   return user;
 };
 
-export const UserServices = { createUser, getUserProfile, getAllUsers };
+const updateUser = async (
+  userId: string,
+  payload: Partial<IUser>,
+  decodedToken: JwtPayload,
+) => {
+  const isUserExist = await User.findById(userId);
+  if (!isUserExist) {
+    throw new AppError(400, "User not found");
+  }
+  if (payload.role) {
+    if (decodedToken.role === Role.USER || decodedToken.role === Role.GUIDE) {
+      throw new AppError(403, "You are not authorized");
+    }
+    if (payload.role === Role.SUPER_ADMIN && decodedToken.role === Role.ADMIN) {
+      throw new AppError(403, "You are not authorized");
+    }
+  }
+  if (payload.isActive || payload.isDeleted || payload.isVerified) {
+    if (decodedToken.role === Role.USER || decodedToken.role === Role.GUIDE) {
+      throw new AppError(403, "You are not authorized");
+    }
+  }
+  if (payload.password) {
+    payload.password = await bcryptjs.hash(
+      payload.password,
+      Number(envVars.BCRYPT_SALT_ROUND),
+    );
+  }
+  const updatedUserInfo = await User.findByIdAndUpdate(userId, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return updatedUserInfo;
+};
+
+export const UserServices = {
+  createUser,
+  getUserProfile,
+  getAllUsers,
+  updateUser,
+};
