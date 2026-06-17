@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
-import { catchAsync } from "../../../utils/catchAsync";
-import { sendResponse } from "../../../utils/sendResponse";
+import { JwtPayload } from "jsonwebtoken";
+
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
 import { UserServices } from "./user.service";
 
 //register user
@@ -40,7 +42,7 @@ const getUserProfile = async (
 const updateUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.id;
-    const decodedToken = req.user;
+    const decodedToken = req.user as JwtPayload;
     const updatedUserInfo = await UserServices.updateUser(
       userId,
       req.body,

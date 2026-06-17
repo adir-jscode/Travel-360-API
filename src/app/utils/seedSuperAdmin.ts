@@ -1,7 +1,7 @@
 import bcryptjs from "bcryptjs";
-import { envVars } from "../app/config/env";
-import { IAuthProvider, IUser, Role } from "../app/modules/user/user.interface";
-import { User } from "../app/modules/user/user.model";
+import { envVars } from "../config/env";
+import { IAuthProvider, IUser, Role } from "../modules/user/user.interface";
+import { User } from "../modules/user/user.model";
 
 export const seedSuperAdmin = async () => {
   try {
@@ -24,6 +24,7 @@ export const seedSuperAdmin = async () => {
     };
 
     const payload: IUser = {
+      _id: new User()._id,
       name: "Super Admin",
       role: Role.SUPER_ADMIN,
       email: envVars.SUPER_ADMIN_EMAIL,

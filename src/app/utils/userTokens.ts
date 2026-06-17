@@ -1,5 +1,5 @@
-import { envVars } from "../app/config/env";
-import { IUser } from "../app/modules/user/user.interface";
+import { envVars } from "../config/env";
+import { IUser } from "../modules/user/user.interface";
 import { generateToken } from "./jwt";
 
 export const createUserTokens = (user: Partial<IUser>) => {
