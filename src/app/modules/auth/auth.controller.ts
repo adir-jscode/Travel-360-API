@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
-import { catchAsync } from "../../../utils/catchAsync";
-import { sendResponse } from "../../../utils/sendResponse";
-import { setAuthCookie } from "../../../utils/serAuthCookie";
+import { JwtPayload } from "jsonwebtoken";
 import AppError from "../../errorHelpers/AppError";
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
+import { setAuthCookie } from "../../utils/serAuthCookie";
 import { AuthServices } from "./auth.service";
 
 const credentialLogin = catchAsync(
@@ -58,7 +59,7 @@ const getNewAccessToken = catchAsync(
 const resetPassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { oldPassword, newPassword } = req.body;
-    const decodedToken = req.user;
+    const decodedToken = req.user as JwtPayload;
     await AuthServices.resetPassword(oldPassword, newPassword, decodedToken);
     sendResponse(res, {
       success: true,

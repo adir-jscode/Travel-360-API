@@ -1,9 +1,9 @@
 import bcryptjs from "bcryptjs";
 import { JwtPayload } from "jsonwebtoken";
-import { generateToken, verifyToken } from "../../../utils/jwt";
-import { createUserTokens } from "../../../utils/userTokens";
 import { envVars } from "../../config/env";
 import AppError from "../../errorHelpers/AppError";
+import { generateToken, verifyToken } from "../../utils/jwt";
+import { createUserTokens } from "../../utils/userTokens";
 import { IsActive, IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 
