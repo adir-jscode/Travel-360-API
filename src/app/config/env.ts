@@ -18,6 +18,7 @@ interface EnvConfig {
   GOOGLE_CALLBACK_URL: string;
   EXPRESS_SESSION_SECRET: string;
   FRONTEND_URL: string;
+  GROQ_API_KEY: string;
   NODE_ENV: "development" | "production";
 }
 
@@ -38,6 +39,7 @@ const loadEnvVariables = (): EnvConfig => {
     "GOOGLE_CALLBACK_URL",
     "EXPRESS_SESSION_SECRET",
     "FRONTEND_URL",
+    "GROQ_API_KEY",
     "NODE_ENV",
   ];
 
@@ -63,6 +65,7 @@ const loadEnvVariables = (): EnvConfig => {
     GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL as string,
     EXPRESS_SESSION_SECRET: process.env.EXPRESS_SESSION_SECRET as string,
     FRONTEND_URL: process.env.FRONTEND_URL as string,
+    GROQ_API_KEY: process.env.GROQ_API_KEY as string,
     NODE_ENV: process.env.NODE_ENV as "development" | "production",
   };
 };

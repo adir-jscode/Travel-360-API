@@ -11,9 +11,23 @@ router.post(
   validateRequest(createUserZodSchema),
   UserControllers.createUser,
 );
-router.get("/profile", checkAuth(Role.USER), UserControllers.getUserProfile);
+
+//  public profile view other users
+router.get(
+  "/profile/:id",
+  checkAuth(Role.USER),
+  UserControllers.getUserProfile,
+);
+// view profile after login
+router.get(
+  "/profile",
+  checkAuth(...Object.values(Role)),
+  UserControllers.getUserProfile,
+);
+
+// all users can update their profile after login
 router.patch(
-  "/:id",
+  "/profile/:id",
   validateRequest(updateUserZodSchema),
   checkAuth(...Object.values(Role)),
   UserControllers.updateUser,

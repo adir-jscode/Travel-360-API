@@ -20,6 +20,18 @@ const credentialLogin = async (payload: Partial<IUser>) => {
   if (!isPasswordMatch) {
     throw new AppError(400, "Incorrect Password");
   }
+  if (!isUserExist.isVerified) {
+    throw new AppError(400, "You are not verified");
+  }
+  if (
+    isUserExist.isActive === IsActive.BLOCKED ||
+    isUserExist.isActive === IsActive.INACTIVE
+  ) {
+    throw new AppError(400, `User is ${isUserExist.isActive}`);
+  }
+  if (isUserExist.isDeleted) {
+    throw new AppError(400, "User is deleted");
+  }
 
   const tokens = createUserTokens(isUserExist);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -84,6 +96,9 @@ const resetPassword = async (
   if (!isOldPasswordMatch) {
     throw new AppError(401, "Old password does not match");
   }
+  if (newPassword === oldPassword) {
+    throw new AppError(400, "New password must be different from old password");
+  }
 
   const hashNewPassword = await bcryptjs.hash(
     newPassword as string,
@@ -92,7 +107,7 @@ const resetPassword = async (
 
   user.password = hashNewPassword;
 
-  user.save();
+  await user.save();
 };
 
 export const AuthServices = {

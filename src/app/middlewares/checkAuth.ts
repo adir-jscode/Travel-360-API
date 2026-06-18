@@ -28,6 +28,7 @@ export const checkAuth =
       }
       //set token to req object
       req.user = verifiedToken;
+
       //pass to next middleware
       next();
     } catch (error) {

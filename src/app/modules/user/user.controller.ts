@@ -26,7 +26,7 @@ const getUserProfile = async (
   next: NextFunction,
 ) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.id || (req.user as JwtPayload).userId;
     const profile = await UserServices.getUserProfile(userId);
     sendResponse(res, {
       success: true,
@@ -41,10 +41,8 @@ const getUserProfile = async (
 
 const updateUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.id;
     const decodedToken = req.user as JwtPayload;
     const updatedUserInfo = await UserServices.updateUser(
-      userId,
       req.body,
       decodedToken,
     );

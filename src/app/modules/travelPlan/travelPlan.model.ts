@@ -1,21 +1,23 @@
-import mongoose from "mongoose";
+import mongoose, { model } from "mongoose";
+import { ITravelPlan, TravelType, Visibility } from "./travelPlan.interface";
 
 const travelPlanSchema = new mongoose.Schema(
   {
-    destination: String,
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    destination: {
+      city: { type: String },
+      country: String,
+    },
     days: Number,
-    slug: { type: String, unique: true },
-
-    title: String,
-    description: String,
-
-    highlights: [
-      {
-        title: String,
-        description: String,
-      },
-    ],
-
+    startDate: Date,
+    endDate: Date,
+    budgetMin: Number,
+    budgetMax: Number,
+    travelType: {
+      type: String,
+      enum: Object.values(TravelType),
+      default: TravelType.SOLO,
+    },
     itinerary: [
       {
         day: Number,
@@ -23,24 +25,13 @@ const travelPlanSchema = new mongoose.Schema(
         activities: [String],
       },
     ],
-
-    images: {
-      hero: String,
-      gallery: [String],
-    },
-
-    meta: {
-      metaTitle: String,
-      metaDescription: String,
-      metaImage: String,
-    },
-
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    visibility: {
+      type: String,
+      enum: Object.values(Visibility),
+      default: Visibility.PUBLIC,
     },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
 
-module.exports = mongoose.model("TravelPlan", travelPlanSchema);
+export const TravelPlan = model<ITravelPlan>("TravelPlan", travelPlanSchema);
