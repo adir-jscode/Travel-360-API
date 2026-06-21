@@ -116,7 +116,10 @@ const getRecentReviews = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-  const result = await UserServices.getAllUsers();
+  const query = req.query || "";
+  const result = await UserServices.getAllUsers(
+    query as Record<string, string>,
+  );
 
   sendResponse(res, {
     success: true,

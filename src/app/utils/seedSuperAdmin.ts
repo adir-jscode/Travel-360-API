@@ -25,8 +25,8 @@ export const seedSuperAdmin = async () => {
 
     const payload: IUser = {
       _id: new User()._id,
-      name: "Super Admin",
-      role: Role.SUPER_ADMIN,
+      name: "Admin",
+      role: Role.ADMIN,
       email: envVars.SUPER_ADMIN_EMAIL,
       password: hashedPassword,
       auths: [authProvider],

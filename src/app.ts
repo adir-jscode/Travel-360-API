@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import expressSession from "express-session";
 import passport from "passport";
+import { envVars } from "./app/config/env";
 import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
 import { router } from "./app/routes";
@@ -30,6 +31,13 @@ app.get("/", (req, res) => {
     message: "Welcome to travel-360 backend 🚀",
   });
 });
+
+app.use(
+  cors({
+    origin: [envVars.URL as string, "http://localhost:3000"],
+    credentials: true,
+  }),
+);
 
 app.use(globalErrorHandler);
 

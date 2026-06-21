@@ -1,9 +1,9 @@
+"use strict";
 // /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { Response } from "express";
 // import multer from "multer";
 // import { CloudinaryStorage } from "multer-storage-cloudinary";
 // import { cloudinaryUpload } from "./cloudinary.config";
-
 // const storage = new CloudinaryStorage({
 //   cloudinary: cloudinaryUpload,
 //   params: {
@@ -12,11 +12,8 @@
 //         .toLowerCase()
 //         .replace(/\s+/g, "-") // empty space remove replace with dash
 //         .replace(/\./g, "-")
-
 //         .replace(/[^a-z0-9\-\.]/g, ""); // non alpha numeric - !@#$
-
 //       const extension = file.originalname.split(".").pop();
-
 //       const uniqueFileName =
 //         Math.random().toString(36).substring(2) +
 //         "-" +
@@ -25,10 +22,8 @@
 //         fileName +
 //         "." +
 //         extension;
-
 //       return uniqueFileName;
 //     },
 //   },
 // });
-
 // export const multerUpload = multer({ storage: storage });
