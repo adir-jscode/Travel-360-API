@@ -88,10 +88,24 @@ const toggleVisibility = catchAsync(async (req, res) => {
   });
 });
 
+const getAllTravelPlans = catchAsync(async (req, res) => {
+  const result = await TravelPlanServices.getAllTravelPlans(
+    req.query as Record<string, string>,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Travel plans retrieved successfully",
+    data: result,
+  });
+});
+
 export const travelPlanControllers = {
   generateTravelPlan,
   createTravelPlan,
   updateTravelPlan,
   deleteTravelPlan,
   toggleVisibility,
+  getAllTravelPlans,
 };

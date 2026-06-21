@@ -3,7 +3,7 @@ import { ITravelPlan, TravelType, Visibility } from "./travelPlan.interface";
 
 const travelPlanSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     destination: {
       city: { type: String },
       country: String,

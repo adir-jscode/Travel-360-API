@@ -20,8 +20,8 @@ const userSchema = new Schema<IUser>(
     phone: { type: String },
     picture: { type: String },
     bio: { type: String },
-    travelInterest: { type: String },
-    visitedCountries: { type: String },
+    travelInterest: [{ type: String }],
+    visitedCountries: [{ type: String }],
     currentLocation: { type: String },
     isActive: {
       type: String,
@@ -30,12 +30,46 @@ const userSchema = new Schema<IUser>(
     },
     isVerified: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
+    isPremium: { type: Boolean, default: false },
+    ratings: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+        value: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+      },
+    ],
+    rating: {
+      type: Number,
+      default: 0,
+    },
+    reviews: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        description: {
+          type: String,
+          required: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
     role: {
       type: String,
       enum: Object.values(Role),
       default: Role.USER,
     },
-
     auths: [authProviderSchema],
   },
   {

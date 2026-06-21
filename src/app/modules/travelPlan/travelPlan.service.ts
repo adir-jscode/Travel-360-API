@@ -181,10 +181,59 @@ const toggleVisibility = async (userId: string, planId: string) => {
   return updatedPlan;
 };
 
+// search travelPlan by destination,startDate,endDate
+const getAllTravelPlans = async (query: Record<string, string>) => {
+  const { country, city, startDate, endDate } = query;
+  console.log(query);
+
+  const filter: Record<string, unknown> = {
+    visibility: Visibility.PUBLIC,
+  };
+
+  if (country) {
+    filter["destination.country"] = {
+      $regex: country,
+      $options: "i",
+    };
+  }
+
+  if (city) {
+    filter["destination.city"] = {
+      $regex: city,
+      $options: "i",
+    };
+  }
+
+  if (startDate || endDate) {
+    filter.startDate = {};
+
+    if (startDate) {
+      filter.startDate = {
+        ...(filter.startDate as object),
+        $gte: new Date(startDate),
+      };
+    }
+
+    if (endDate) {
+      filter.startDate = {
+        ...(filter.startDate as object),
+        $lte: new Date(endDate),
+      };
+    }
+  }
+
+  const result = await TravelPlan.find(filter)
+    .populate("user", "name")
+    .sort({ createdAt: -1 });
+
+  return result;
+};
+
 export const TravelPlanServices = {
   generateTravelPlan,
   createTravelPlan,
   updateTravelPlan,
   deleteTravelPlan,
   toggleVisibility,
+  getAllTravelPlans,
 };

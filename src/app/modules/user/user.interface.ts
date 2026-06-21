@@ -17,6 +17,17 @@ export interface IAuthProvider {
   provider: "GOOGLE" | "CREDENTIAL";
   providerId: string;
 }
+
+export interface IReview {
+  user: Types.ObjectId;
+  description: string;
+  createdAt: Date;
+}
+
+export interface IUserRating {
+  user: Types.ObjectId;
+  value: number;
+}
 export interface IUser {
   _id: Types.ObjectId;
   name: string;
@@ -32,8 +43,9 @@ export interface IUser {
   isDeleted?: boolean;
   isVerified?: boolean;
   isPremium?: boolean;
-  avgRating?: number;
-  reviewCount?: number;
+  ratings?: IUserRating[];
+  rating?: number;
+  reviews?: IReview[];
   role: Role;
   auths: IAuthProvider[];
 }

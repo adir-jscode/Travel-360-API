@@ -55,8 +55,95 @@ const updateUser = catchAsync(
   },
 );
 
+const giveRating = catchAsync(async (req: Request, res: Response) => {
+  const reviewerId = (req.user as JwtPayload).userId;
+
+  const targetUserId = req.params.id;
+
+  const { value } = req.body;
+
+  const result = await UserServices.giveRating(targetUserId, reviewerId, value);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Rating submitted successfully",
+    data: result,
+  });
+});
+
+const giveReview = catchAsync(async (req: Request, res: Response) => {
+  const reviewerId = (req.user as JwtPayload).userId;
+
+  const targetUserId = req.params.id;
+
+  const { description } = req.body;
+
+  const result = await UserServices.giveReview(
+    targetUserId,
+    reviewerId,
+    description,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 201,
+    message: "Review submitted successfully",
+    data: result,
+  });
+});
+
+const getAverageRating = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.getAverageRating(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Average rating retrieved successfully",
+    data: result,
+  });
+});
+
+const getRecentReviews = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.getRecentReviews(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Reviews retrieved successfully",
+    data: result,
+  });
+});
+
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.getAllUsers();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "All Users retrieved successfully",
+    data: result,
+  });
+});
+
+const deleteUser = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.deleteUser(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "User deleted successfully",
+    data: result,
+  });
+});
 export const UserControllers = {
   createUser,
   getUserProfile,
   updateUser,
+  deleteUser,
+  giveRating,
+  giveReview,
+  getAverageRating,
+  getRecentReviews,
+  getAllUsers,
 };
