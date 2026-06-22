@@ -30,7 +30,7 @@ const userSchema = new Schema<IUser>(
     },
     isVerified: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
-    isPremium: { type: Boolean, default: false },
+
     ratings: [
       {
         user: {

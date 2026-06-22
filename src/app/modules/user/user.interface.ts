@@ -28,6 +28,7 @@ export interface IUserRating {
   user: Types.ObjectId;
   value: number;
 }
+
 export interface IUser {
   _id: Types.ObjectId;
   name: string;
@@ -42,7 +43,6 @@ export interface IUser {
   isActive?: IsActive;
   isDeleted?: boolean;
   isVerified?: boolean;
-  isPremium?: boolean;
   ratings?: IUserRating[];
   rating?: number;
   reviews?: IReview[];
