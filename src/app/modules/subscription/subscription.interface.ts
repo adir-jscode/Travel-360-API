@@ -12,10 +12,11 @@ export enum SUBSCRIPTION_PLAN {
   YEARLY = "YEARLY",
 }
 export interface ISubscription {
-  user: Types.ObjectId;
+  user: Types.ObjectId; //decoded
+  subscriptionPlan: Types.ObjectId; // params or payload
   payment?: Types.ObjectId;
-  plan?: SUBSCRIPTION_PLAN;
-  paidAt?: Date;
-  expiresAt?: Date;
+  plan?: SUBSCRIPTION_PLAN; // input
+  paidAt?: Date; // generate
+  expiresAt?: Date; // generate
   status: SUBSCRIPTION_STATUS;
 }

@@ -23,4 +23,5 @@ export interface IPayment {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   paymentGatewayData?: any;
   invoiceUrl?: string;
+  stripeSessionId?: string;
 }

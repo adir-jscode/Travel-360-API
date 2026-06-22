@@ -6,10 +6,15 @@ import passport from "passport";
 import { envVars } from "./app/config/env";
 import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
+import { PaymentControllers } from "./app/modules/payment/payment.controller";
 import { router } from "./app/routes";
 
 const app = express();
-
+app.post(
+  "/api/v1/payment/webhook",
+  express.raw({ type: "application/json" }),
+  PaymentControllers.handleWebhook,
+);
 //middlewares
 app.use(
   expressSession({

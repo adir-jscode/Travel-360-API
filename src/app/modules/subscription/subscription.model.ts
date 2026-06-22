@@ -12,10 +12,14 @@ const subscriptionSchema = new Schema<ISubscription>(
       ref: "User",
       required: true,
     },
+    subscriptionPlan: {
+      type: Schema.Types.ObjectId,
+      ref: "SubscriptionPlan",
+      required: true,
+    },
     payment: {
       type: Schema.Types.ObjectId,
       ref: "Payment",
-      required: true,
     },
     plan: {
       type: String,

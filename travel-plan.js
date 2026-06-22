@@ -42,3 +42,10 @@
 // [1]     }
 // [1]   ]
 // [1] }
+// 1. Initialize today's date
+const dateInOneYear = new Date();
+
+// 2. Add 1 year
+dateInOneYear.setFullYear(dateInOneYear.getFullYear() + 1);
+
+console.log("Date in 1 year:", dateInOneYear);

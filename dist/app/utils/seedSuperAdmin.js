@@ -34,8 +34,8 @@ const seedSuperAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
         };
         const payload = {
             _id: new user_model_1.User()._id,
-            name: "Super Admin",
-            role: user_interface_1.Role.SUPER_ADMIN,
+            name: "Admin",
+            role: user_interface_1.Role.ADMIN,
             email: env_1.envVars.SUPER_ADMIN_EMAIL,
             password: hashedPassword,
             auths: [authProvider],

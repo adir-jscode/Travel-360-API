@@ -22,6 +22,10 @@ interface EnvConfig {
   CLOUDINARY_CLOUD_NAME: string;
   CLOUDINARY_API_KEY: string;
   CLOUDINARY_API_SECRET: string;
+  STRIPE_SECRET_KEY: string;
+  STRIPE_WEBHOOK_SECRET: string;
+  CLIENT_URL: string;
+  SERVER_URL: string;
   URL: string;
   NODE_ENV: "development" | "production";
 }
@@ -48,6 +52,10 @@ const loadEnvVariables = (): EnvConfig => {
     "CLOUDINARY_API_KEY",
     "CLOUDINARY_API_SECRET",
     "URL",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "CLIENT_URL",
+    "SERVER_URL",
     "NODE_ENV",
   ];
 
@@ -77,6 +85,10 @@ const loadEnvVariables = (): EnvConfig => {
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY as string,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET as string,
+    CLIENT_URL: process.env.CLIENT_URL as string,
+    SERVER_URL: process.env.SERVER_URL as string,
     URL: process.env.URL as string,
     NODE_ENV: process.env.NODE_ENV as "development" | "production",
   };

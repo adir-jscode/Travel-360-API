@@ -27,6 +27,8 @@ exports.UserServices = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const env_1 = require("../../config/env");
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
+const QueryBuilder_1 = require("../../utils/QueryBuilder");
+const user_constant_1 = require("./user.constant");
 const user_interface_1 = require("./user.interface");
 const user_model_1 = require("./user.model");
 /*
@@ -57,14 +59,22 @@ const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     return user;
 });
 //all users
-const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield user_model_1.User.find({});
-    const totalUsers = yield user_model_1.User.countDocuments();
+const getAllUsers = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const queryBuilder = new QueryBuilder_1.QueryBuilder(user_model_1.User.find(), query);
+    const tours = yield queryBuilder
+        .search(user_constant_1.userSearchableFields)
+        .filter()
+        .sort()
+        .fields()
+        .paginate();
+    // const meta = await queryBuilder.getMeta()
+    const [data, meta] = yield Promise.all([
+        tours.build(),
+        queryBuilder.getMeta(),
+    ]);
     return {
-        data: users,
-        meta: {
-            total: totalUsers,
-        },
+        data,
+        meta,
     };
 });
 // public profile view other users

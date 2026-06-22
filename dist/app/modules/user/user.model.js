@@ -27,7 +27,6 @@ const userSchema = new mongoose_1.Schema({
     },
     isVerified: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
-    isPremium: { type: Boolean, default: false },
     ratings: [
         {
             user: {

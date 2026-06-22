@@ -41,6 +41,9 @@ const paymentSchema = new Schema<IPayment>(
     invoiceUrl: {
       type: String,
     },
+    stripeSessionId: {
+      type: String,
+    },
   },
   {
     timestamps: true,
