@@ -1,10 +1,29 @@
 import { model, Schema } from "mongoose";
-import { IAuthProvider, IsActive, IUser, Role } from "./user.interface";
+import {
+  IAuthProvider,
+  IsActive,
+  IUser,
+  IUserSubscription,
+  Role,
+} from "./user.interface";
 
 const authProviderSchema = new Schema<IAuthProvider>(
   {
     provider: { type: String },
     providerId: { type: String },
+  },
+  {
+    _id: false,
+    versionKey: false,
+  },
+);
+
+const userSubscriptionSchema = new Schema<IUserSubscription>(
+  {
+    plan: { type: String },
+    startDate: { type: Date },
+    endDate: { type: Date },
+    isActive: { type: Boolean },
   },
   {
     _id: false,
@@ -30,7 +49,7 @@ const userSchema = new Schema<IUser>(
     },
     isVerified: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
-
+    subscription: userSubscriptionSchema,
     ratings: [
       {
         user: {

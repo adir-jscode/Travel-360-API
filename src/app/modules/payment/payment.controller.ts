@@ -9,7 +9,6 @@ import { PaymentServices } from "./payment.service";
 
 const handleWebhook = catchAsync(async (req: Request, res: Response) => {
   const sig = req.headers["stripe-signature"];
-  console.log("Webhook hitted");
 
   if (!sig || Array.isArray(sig)) {
     throw new AppError(400, "Stripe signature missing");

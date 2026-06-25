@@ -10,6 +10,15 @@ const authProviderSchema = new mongoose_1.Schema({
     _id: false,
     versionKey: false,
 });
+const userSubscriptionSchema = new mongoose_1.Schema({
+    plan: { type: String },
+    startDate: { type: Date },
+    endDate: { type: Date },
+    isActive: { type: Boolean },
+}, {
+    _id: false,
+    versionKey: false,
+});
 const userSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -27,6 +36,7 @@ const userSchema = new mongoose_1.Schema({
     },
     isVerified: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
+    subscription: userSubscriptionSchema,
     ratings: [
         {
             user: {

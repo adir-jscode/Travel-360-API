@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TravelPlanRoutes = void 0;
 const express_1 = require("express");
 const checkAuth_1 = require("../../middlewares/checkAuth");
+const requirePremium_1 = require("../../middlewares/requirePremium");
 const validateRequest_1 = require("../../middlewares/validateRequest");
 const user_interface_1 = require("../user/user.interface");
 const travelPlan_controller_1 = require("./travelPlan.controller");
@@ -13,5 +14,5 @@ router.post("/travel-plans", (0, validateRequest_1.validateRequest)(travelPlan_v
 router.patch("/travel-plans/:id", (0, validateRequest_1.validateRequest)(travelPlan_validation_1.updateTravelPlanZodSchema), (0, checkAuth_1.checkAuth)(user_interface_1.Role.USER), travelPlan_controller_1.travelPlanControllers.updateTravelPlan);
 router.delete("/travel-plans/:id", (0, checkAuth_1.checkAuth)(user_interface_1.Role.USER), travelPlan_controller_1.travelPlanControllers.deleteTravelPlan);
 router.patch("/travel-plans/:id/toggle-visibility", (0, checkAuth_1.checkAuth)(user_interface_1.Role.USER), travelPlan_controller_1.travelPlanControllers.toggleVisibility);
-router.get("/travel-plans", (0, checkAuth_1.checkAuth)(user_interface_1.Role.USER, user_interface_1.Role.ADMIN), travelPlan_controller_1.travelPlanControllers.getAllTravelPlans);
+router.get("/travel-plans", (0, checkAuth_1.checkAuth)(user_interface_1.Role.USER, user_interface_1.Role.ADMIN), (0, requirePremium_1.requirePremium)(), travelPlan_controller_1.travelPlanControllers.getAllTravelPlans);
 exports.TravelPlanRoutes = router;

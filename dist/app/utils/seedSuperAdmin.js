@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.seedSuperAdmin = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const env_1 = require("../config/env");
+const subscriptionPlan_interface_1 = require("../modules/subscriptionPlan/subscriptionPlan.interface");
 const user_interface_1 = require("../modules/user/user.interface");
 const user_model_1 = require("../modules/user/user.model");
 const seedSuperAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -39,6 +40,12 @@ const seedSuperAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
             email: env_1.envVars.SUPER_ADMIN_EMAIL,
             password: hashedPassword,
             auths: [authProvider],
+            subscription: {
+                plan: subscriptionPlan_interface_1.SUBSCRIPTION_PLAN.VOYAGER,
+                startDate: new Date(),
+                endDate: new Date(),
+                isActive: true,
+            },
             isVerified: true,
         };
         const superAdmin = yield user_model_1.User.create(payload);

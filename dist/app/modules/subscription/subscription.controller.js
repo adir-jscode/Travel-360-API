@@ -15,8 +15,11 @@ const sendResponse_1 = require("../../utils/sendResponse");
 const subscription_service_1 = require("./subscription.service");
 const createSubscription = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const decodedToken = req.user;
-    const userId = decodedToken.id;
-    const subscription = yield subscription_service_1.SubscriptionServices.createSubscription(req.body, userId);
+    const userId = decodedToken.userId;
+    const subscriptionPlanId = req.params.id;
+    const subscription = yield subscription_service_1.SubscriptionServices.createSubscription(
+    // req.body,
+    userId, subscriptionPlanId);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: 200,

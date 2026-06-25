@@ -17,7 +17,6 @@ const subscriptionSchema = new mongoose_1.Schema({
     payment: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "Payment",
-        required: true,
     },
     plan: {
         type: String,

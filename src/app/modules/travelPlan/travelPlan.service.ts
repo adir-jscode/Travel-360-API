@@ -1,5 +1,6 @@
 import { groq } from "../../config/groq.config";
 import AppError from "../../errorHelpers/AppError";
+import { User } from "../user/user.model";
 import { ITravelPlan, TravelType, Visibility } from "./travelPlan.interface";
 import { TravelPlan } from "./travelPlan.model";
 
@@ -7,6 +8,16 @@ const generateTravelPlan = async (
   userId: string,
   payload: Partial<ITravelPlan>,
 ) => {
+  const planCount = await TravelPlan.countDocuments({
+    user: userId,
+  });
+  const user = await User.findById(userId);
+  if (!user?.subscription?.isActive && planCount >= 1) {
+    throw new AppError(
+      403,
+      "Free users can generate only 1 travel plans using AI",
+    );
+  }
   const { destination, days } = payload;
 
   if (!destination || !days) {
@@ -112,6 +123,13 @@ const createTravelPlan = async (
   userId: string,
   payload: Partial<ITravelPlan>,
 ) => {
+  const planCount = await TravelPlan.countDocuments({
+    user: userId,
+  });
+  const user = await User.findById(userId);
+  if (!user?.subscription?.isActive && planCount >= 3) {
+    throw new AppError(403, "Free users can create only 3 travel plans");
+  }
   const travelPlan = await TravelPlan.create({
     ...payload,
     user: userId,

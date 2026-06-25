@@ -27,6 +27,11 @@ interface EnvConfig {
   CLIENT_URL: string;
   SERVER_URL: string;
   URL: string;
+  SMTP_HOST: string;
+  SMTP_PORT: string;
+  SMTP_USER: string;
+  SMTP_PASS: string;
+  SMTP_FROM: string;
   NODE_ENV: "development" | "production";
 }
 
@@ -56,6 +61,11 @@ const loadEnvVariables = (): EnvConfig => {
     "STRIPE_WEBHOOK_SECRET",
     "CLIENT_URL",
     "SERVER_URL",
+    "SMTP_HOST",
+    "SMTP_PORT",
+    "SMTP_USER",
+    "SMTP_PASS",
+    "SMTP_FROM",
     "NODE_ENV",
   ];
 
@@ -90,6 +100,11 @@ const loadEnvVariables = (): EnvConfig => {
     CLIENT_URL: process.env.CLIENT_URL as string,
     SERVER_URL: process.env.SERVER_URL as string,
     URL: process.env.URL as string,
+    SMTP_HOST: process.env.SMTP_HOST as string,
+    SMTP_PORT: process.env.SMTP_PORT as string,
+    SMTP_USER: process.env.SMTP_USER as string,
+    SMTP_PASS: process.env.SMTP_PASS as string,
+    SMTP_FROM: process.env.SMTP_FROM as string,
     NODE_ENV: process.env.NODE_ENV as "development" | "production",
   };
 };

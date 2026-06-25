@@ -70,9 +70,25 @@ const resetPassword = catchAsync(
   },
 );
 
+const forgotPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+
+    await AuthServices.forgotPassword(email);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Email Sent Successfully",
+      data: null,
+    });
+  },
+);
+
 export const AuthControllers = {
   credentialLogin,
   getNewAccessToken,
   logout,
   resetPassword,
+  forgotPassword,
 };

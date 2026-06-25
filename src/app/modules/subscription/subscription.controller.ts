@@ -9,7 +9,7 @@ const createSubscription = catchAsync(async (req: Request, res: Response) => {
   const userId = decodedToken.userId;
   const subscriptionPlanId = req.params.id;
   const subscription = await SubscriptionServices.createSubscription(
-    req.body,
+    // req.body,
     userId,
     subscriptionPlanId,
   );

@@ -32,7 +32,8 @@ export const createUserZodSchema = z.object({
   currentLocation: z
     .string({ error: "current Location must be string" })
     .min(2, { message: "current Location must be at least 2 characters long." })
-    .max(50, { message: "current Location cannot exceed 50 characters." }),
+    .max(50, { message: "current Location cannot exceed 50 characters." })
+    .optional(),
 });
 
 // name, phone,picture,bio,travelInterest,visitedCountries,currentLocation

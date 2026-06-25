@@ -13,7 +13,7 @@ export enum SUBSCRIPTION_PLAN {
 }
 export interface ISubscription {
   user: Types.ObjectId; //decoded
-  subscriptionPlan: Types.ObjectId; // params or payload
+  subscriptionPlan: Types.ObjectId;
   payment?: Types.ObjectId;
   plan?: SUBSCRIPTION_PLAN; // input
   paidAt?: Date; // generate

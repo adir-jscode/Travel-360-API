@@ -11,8 +11,10 @@ const passport_1 = __importDefault(require("passport"));
 const env_1 = require("./app/config/env");
 const globalErrorHandler_1 = require("./app/middlewares/globalErrorHandler");
 const notFound_1 = __importDefault(require("./app/middlewares/notFound"));
+const payment_controller_1 = require("./app/modules/payment/payment.controller");
 const routes_1 = require("./app/routes");
 const app = (0, express_1.default)();
+app.post("/api/v1/payment/webhook", express_1.default.raw({ type: "application/json" }), payment_controller_1.PaymentControllers.handleWebhook);
 //middlewares
 app.use((0, express_session_1.default)({
     secret: "Your secret",

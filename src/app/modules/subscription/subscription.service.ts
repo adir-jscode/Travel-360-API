@@ -5,7 +5,7 @@ import { Payment } from "../payment/payment.model";
 import { SUBSCRIPTION_DURATION } from "../subscriptionPlan/subscriptionPlan.interface";
 import { SubscriptionPlan } from "../subscriptionPlan/subscriptionPlan.model";
 import { User } from "../user/user.model";
-import { ISubscription, SUBSCRIPTION_STATUS } from "./subscription.interface";
+import { SUBSCRIPTION_STATUS } from "./subscription.interface";
 import { Subscription } from "./subscription.model";
 
 const getTransactionId = () => {
@@ -13,7 +13,7 @@ const getTransactionId = () => {
 };
 
 const createSubscription = async (
-  payload: Partial<ISubscription>,
+  //payload: Partial<ISubscription>,
   userId: string,
   subscriptionPlanId: string,
 ) => {
@@ -48,13 +48,12 @@ const createSubscription = async (
         {
           user: userId,
           subscriptionPlan: subscriptionPlan._id,
+          plan: subscriptionPlan.duration,
           status: SUBSCRIPTION_STATUS.PENDING,
-          ...payload,
         },
       ],
       { session },
     );
-    console.log(subscription);
 
     const payment = await Payment.create(
       [

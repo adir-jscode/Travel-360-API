@@ -1,5 +1,6 @@
 import bcryptjs from "bcryptjs";
 import { envVars } from "../config/env";
+import { SUBSCRIPTION_PLAN } from "../modules/subscriptionPlan/subscriptionPlan.interface";
 import { IAuthProvider, IUser, Role } from "../modules/user/user.interface";
 import { User } from "../modules/user/user.model";
 
@@ -30,6 +31,12 @@ export const seedSuperAdmin = async () => {
       email: envVars.SUPER_ADMIN_EMAIL,
       password: hashedPassword,
       auths: [authProvider],
+      subscription: {
+        plan: SUBSCRIPTION_PLAN.VOYAGER,
+        startDate: new Date(),
+        endDate: new Date(),
+        isActive: true,
+      },
       isVerified: true,
     };
     const superAdmin = await User.create(payload);

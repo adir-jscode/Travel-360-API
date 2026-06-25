@@ -38,6 +38,9 @@ const paymentSchema = new mongoose_1.Schema({
     invoiceUrl: {
         type: String,
     },
+    stripeSessionId: {
+        type: String,
+    },
 }, {
     timestamps: true,
     versionKey: false,

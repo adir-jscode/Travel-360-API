@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { SUBSCRIPTION_PLAN } from "../subscriptionPlan/subscriptionPlan.interface";
 
 export enum IsActive {
   ACTIVE = "ACTIVE",
@@ -11,6 +12,13 @@ export enum Role {
   ADMIN = "ADMIN",
   USER = "USER",
   GUIDE = "GUIDE",
+}
+
+export interface IUserSubscription {
+  plan?: SUBSCRIPTION_PLAN;
+  startDate?: Date;
+  endDate?: Date;
+  isActive: boolean;
 }
 
 export interface IAuthProvider {
@@ -43,6 +51,7 @@ export interface IUser {
   isActive?: IsActive;
   isDeleted?: boolean;
   isVerified?: boolean;
+  subscription: IUserSubscription;
   ratings?: IUserRating[];
   rating?: number;
   reviews?: IReview[];

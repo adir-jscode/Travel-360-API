@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { checkAuth } from "../../middlewares/checkAuth";
+import { requirePremium } from "../../middlewares/requirePremium";
 import { validateRequest } from "../../middlewares/validateRequest";
 import { Role } from "../user/user.interface";
 import { travelPlanControllers } from "./travelPlan.controller";
@@ -44,6 +45,7 @@ router.patch(
 router.get(
   "/travel-plans",
   checkAuth(Role.USER, Role.ADMIN),
+  requirePremium(),
   travelPlanControllers.getAllTravelPlans,
 );
 

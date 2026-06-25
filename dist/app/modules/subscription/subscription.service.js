@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionServices = void 0;
+const stripe_1 = require("../../config/stripe");
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
 const payment_interface_1 = require("../payment/payment.interface");
 const payment_model_1 = require("../payment/payment.model");
@@ -24,7 +25,9 @@ const subscription_model_1 = require("./subscription.model");
 const getTransactionId = () => {
     return `tran_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 };
-const createSubscription = (payload, userId) => __awaiter(void 0, void 0, void 0, function* () {
+const createSubscription = (
+//payload: Partial<ISubscription>,
+userId, subscriptionPlanId) => __awaiter(void 0, void 0, void 0, function* () {
     const transactionId = getTransactionId();
     // 1. Initialize today's date
     const currentDate = new Date();
@@ -34,18 +37,25 @@ const createSubscription = (payload, userId) => __awaiter(void 0, void 0, void 0
     session.startTransaction();
     try {
         const user = yield user_model_1.User.findById(userId);
+        console.log(user);
         if (!(user === null || user === void 0 ? void 0 : user.phone) || !user.currentLocation) {
             throw new AppError_1.default(400, "Please Update Your Profile to get the subscription");
         }
-        const subscriptionPlan = yield subscriptionPlan_model_1.SubscriptionPlan.findById(payload.subscriptionPlan);
+        const subscriptionPlan = yield subscriptionPlan_model_1.SubscriptionPlan.findById(subscriptionPlanId);
         if (!(subscriptionPlan === null || subscriptionPlan === void 0 ? void 0 : subscriptionPlan.price)) {
             throw new AppError_1.default(400, "No Price Found!");
         }
         const subscription = yield subscription_model_1.Subscription.create([
-            Object.assign({ user: userId, status: subscription_interface_1.SUBSCRIPTION_STATUS.PENDING }, payload),
+            {
+                user: userId,
+                subscriptionPlan: subscriptionPlan._id,
+                plan: subscriptionPlan.duration,
+                status: subscription_interface_1.SUBSCRIPTION_STATUS.PENDING,
+            },
         ], { session });
         const payment = yield payment_model_1.Payment.create([
             {
+                user: userId,
                 subscription: subscription[0]._id,
                 status: payment_interface_1.PAYMENT_STATUS.UNPAID,
                 transactionId: transactionId,
@@ -62,11 +72,41 @@ const createSubscription = (payload, userId) => __awaiter(void 0, void 0, void 0
             .populate("user", "name email phone address")
             .populate("subscriptionPlan", "title")
             .populate("payment");
-        console.log(updatedSubscription);
+        const checkoutSession = yield stripe_1.stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            mode: "payment",
+            customer_email: user.email,
+            //success_url: `${envVars.CLIENT_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+            success_url: "https://adir.pro.bd",
+            //cancel_url: `${envVars.CLIENT_URL}/payment/cancel`,
+            cancel_url: "https://adir.pro.bd/#projects",
+            metadata: {
+                userId: userId,
+                paymentId: payment[0]._id.toString(),
+                subscriptionId: subscription[0]._id.toString(),
+                transactionId,
+            },
+            line_items: [
+                {
+                    quantity: 1,
+                    price_data: {
+                        currency: "usd",
+                        unit_amount: subscriptionPlan.price * 100,
+                        product_data: {
+                            name: subscriptionPlan.title,
+                        },
+                    },
+                },
+            ],
+        });
+        yield payment_model_1.Payment.findByIdAndUpdate(payment[0]._id, {
+            stripeSessionId: checkoutSession.id,
+        }, { session });
         yield session.commitTransaction(); //transaction
         session.endSession();
         return {
             subscription: updatedSubscription,
+            checkoutUrl: checkoutSession.url,
         };
     }
     catch (error) {

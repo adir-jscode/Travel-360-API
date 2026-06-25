@@ -17,7 +17,7 @@ export interface IPayment {
   user: Types.ObjectId;
   subscription: Types.ObjectId;
   transactionId: string;
-  //paymentType: PAYMENT_TYPE;
+
   amount: number;
   status: PAYMENT_STATUS;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
