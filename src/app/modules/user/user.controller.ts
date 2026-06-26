@@ -4,6 +4,7 @@ import { JwtPayload } from "jsonwebtoken";
 
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
+import { IUser } from "./user.interface";
 import { UserServices } from "./user.service";
 
 //register user
@@ -42,8 +43,12 @@ const getUserProfile = async (
 const updateUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user as JwtPayload;
+    const payload: IUser = {
+      ...req.body,
+      picture: req.file?.path,
+    };
     const updatedUserInfo = await UserServices.updateUser(
-      req.body,
+      payload,
       decodedToken,
     );
     sendResponse(res, {

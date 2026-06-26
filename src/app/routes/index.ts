@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { AnalyticsRoutes } from "../modules/analytics/analytics.route";
 import { AuthRoutes } from "../modules/auth/auth.route";
 import { SubscriptionRoutes } from "../modules/subscription/subscription.route";
 import { SubscriptionPlanRoutes } from "../modules/subscriptionPlan/subscriptionPlan.route";
@@ -27,6 +28,10 @@ const moduleRoutes = [
   {
     path: "/subscription",
     route: SubscriptionRoutes,
+  },
+  {
+    path: "/analytics",
+    route: AnalyticsRoutes,
   },
 ];
 

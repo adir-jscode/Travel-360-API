@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { multerUpload } from "../../config/multer.config";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { validateRequest } from "../../middlewares/validateRequest";
 import { UserControllers } from "./user.controller";
@@ -37,8 +38,9 @@ router.get(
 // all users can update their profile after login
 router.patch(
   "/profile",
-  validateRequest(updateUserZodSchema),
   checkAuth(...Object.values(Role)),
+  multerUpload.single("file"),
+  validateRequest(updateUserZodSchema),
   UserControllers.updateUser,
 );
 /* Post-trip */
