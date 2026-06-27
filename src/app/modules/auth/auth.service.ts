@@ -5,7 +5,7 @@ import AppError from "../../errorHelpers/AppError";
 import { generateToken, verifyToken } from "../../utils/jwt";
 import { sendEmail } from "../../utils/sendEmail";
 import { createUserTokens } from "../../utils/userTokens";
-import { IsActive, IUser } from "../user/user.interface";
+import { IAuthProvider, IsActive, IUser, Role } from "../user/user.interface";
 import { User } from "../user/user.model";
 
 const credentialLogin = async (payload: Partial<IUser>) => {
@@ -152,10 +152,70 @@ const forgotPassword = async (email: string) => {
     },
   });
 };
+const googleOAuthLogin = async (payload: {
+  name: string;
+  email: string;
+  picture?: string;
+  providerId: string;
+}) => {
+  const { name, email, picture, providerId } = payload;
 
+  if (!email || !name || !providerId) {
+    throw new AppError(400, "Missing required Google OAuth fields");
+  }
+
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    // New user — create with GOOGLE provider
+    const googleAuthProvider: IAuthProvider = {
+      provider: "GOOGLE",
+      providerId,
+    };
+
+    user = await User.create({
+      name,
+      email,
+      picture,
+      role: Role.USER,
+      isVerified: true,
+      isActive: IsActive.ACTIVE,
+      auths: [googleAuthProvider],
+      subscription: { isActive: false },
+    });
+  } else {
+    // Existing user — check they're not blocked/deleted
+    if (
+      user.isActive === IsActive.BLOCKED ||
+      user.isActive === IsActive.INACTIVE
+    ) {
+      throw new AppError(400, `User is ${user.isActive}`);
+    }
+    if (user.isDeleted) {
+      throw new AppError(400, "User is deleted");
+    }
+
+    // Add GOOGLE provider to auths if not already present
+    const alreadyHasGoogle = user.auths?.some((a) => a.provider === "GOOGLE");
+    if (!alreadyHasGoogle) {
+      user.auths = [...(user.auths || []), { provider: "GOOGLE", providerId }];
+      await user.save();
+    }
+  }
+
+  const tokens = createUserTokens(user);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password: _pass, ...rest } = user.toObject();
+  return {
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+    user: rest,
+  };
+};
 export const AuthServices = {
   credentialLogin,
   getNewAccessToken,
   resetPassword,
   forgotPassword,
+  googleOAuthLogin,
 };

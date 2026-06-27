@@ -143,14 +143,15 @@ const updateTravelPlan = async (
   planId: string,
   payload: Partial<ITravelPlan>,
 ) => {
-  const travelPlan = await TravelPlan.findOne({
-    _id: planId,
-    user: userId,
-  });
+  console.log({ planId, userId });
+  // const travelPlan = await TravelPlan.findOne({
+  //   _id: planId,
+  //   user: userId,
+  // });
 
-  if (!travelPlan) {
-    throw new AppError(404, "Travel plan not found");
-  }
+  // if (!travelPlan) {
+  //   throw new AppError(404, "Travel plan not found");
+  // }
 
   const updatedPlan = await TravelPlan.findByIdAndUpdate(planId, payload, {
     new: true,
@@ -246,6 +247,13 @@ const getAllTravelPlans = async (query: Record<string, string>) => {
 
   return result;
 };
+const getTravelPlansById = async (id: string) => {
+  const result = await TravelPlan.findById(id)
+    .populate("user", "name")
+    .sort({ createdAt: -1 });
+
+  return result;
+};
 
 export const TravelPlanServices = {
   generateTravelPlan,
@@ -254,4 +262,5 @@ export const TravelPlanServices = {
   deleteTravelPlan,
   toggleVisibility,
   getAllTravelPlans,
+  getTravelPlansById,
 };

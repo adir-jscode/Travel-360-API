@@ -85,10 +85,39 @@ const forgotPassword = catchAsync(
   },
 );
 
+const googleOAuthLogin = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
+    const { name, email, picture, providerId } = req.body;
+
+    if (!name || !email || !providerId) {
+      throw new AppError(400, "name, email and providerId are required");
+    }
+
+    const loginInfo = await AuthServices.googleOAuthLogin({
+      name,
+      email,
+      picture,
+      providerId,
+    });
+
+    console.log({ loginInfo });
+
+    setAuthCookie(res, loginInfo);
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Google OAuth login successful",
+      data: loginInfo,
+    });
+  },
+);
+
 export const AuthControllers = {
   credentialLogin,
   getNewAccessToken,
   logout,
   resetPassword,
   forgotPassword,
+  googleOAuthLogin,
 };

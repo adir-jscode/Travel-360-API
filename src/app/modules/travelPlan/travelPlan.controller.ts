@@ -44,7 +44,7 @@ const createTravelPlan = catchAsync(async (req, res) => {
 
 const updateTravelPlan = catchAsync(async (req, res) => {
   const decodedToken = req.user as JwtPayload;
-
+  console.log(req.params.id);
   const result = await TravelPlanServices.updateTravelPlan(
     decodedToken.userId,
     req.params.id,
@@ -100,6 +100,17 @@ const getAllTravelPlans = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getTravelPlansById = catchAsync(async (req, res) => {
+  const id = req.params.id;
+  const result = await TravelPlanServices.getTravelPlansById(id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Travel plans retrieved successfully",
+    data: result,
+  });
+});
 
 export const travelPlanControllers = {
   generateTravelPlan,
@@ -108,4 +119,5 @@ export const travelPlanControllers = {
   deleteTravelPlan,
   toggleVisibility,
   getAllTravelPlans,
+  getTravelPlansById,
 };

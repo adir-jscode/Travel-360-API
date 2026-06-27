@@ -14,7 +14,7 @@ router.post(
   validateRequest(userLoginZodSchema),
   AuthControllers.credentialLogin,
 );
-
+router.post("/google-oauth", AuthControllers.googleOAuthLogin);
 router.post("/refresh-token", AuthControllers.getNewAccessToken);
 router.post("/logout", AuthControllers.logout);
 router.post(
