@@ -1,7 +1,8 @@
-import { Server } from "http";
+import { createServer, Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
 import { envVars } from "./app/config/env";
+import { initSocket } from "./app/socket/socket";
 import { seedSuperAdmin } from "./app/utils/seedSuperAdmin";
 
 let server: Server;
@@ -10,8 +11,18 @@ const startServer = async () => {
   try {
     await mongoose.connect(envVars.DB_URL);
     console.log("Connected to Travel-360 DB! 🛫 ");
-    server = app.listen(envVars.PORT, () => {
+
+    // Use a raw http server (instead of app.listen) so Socket.IO can attach
+    // to the same underlying server and share the port.
+    const httpServer = createServer(app);
+
+    // Initialise Socket.IO for real-time notifications (join requests,
+    // accept/reject events, etc.)
+    initSocket(httpServer);
+
+    server = httpServer.listen(envVars.PORT, () => {
       console.log(`app is listening to http://localhost:${envVars.PORT}/ `);
+      console.log("Socket.IO real-time server initialised 🔌");
     });
   } catch (error) {
     console.log(error);

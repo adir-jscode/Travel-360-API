@@ -1,6 +1,8 @@
-import { Server as HttpServer } from 'http';
-import { Server as SocketIOServer, Socket } from 'socket.io';
-import { INotification } from '../modules/notification/notification.interface';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/consistent-generic-constructors */
+import { Server as HttpServer } from "http";
+import { Socket, Server as SocketIOServer } from "socket.io";
+import { INotification } from "../modules/notification/notification.interface";
 
 let io: SocketIOServer;
 
@@ -10,12 +12,12 @@ const userSockets: Map<string, Set<string>> = new Map();
 export const initSocket = (httpServer: HttpServer): SocketIOServer => {
   io = new SocketIOServer(httpServer, {
     cors: {
-      origin: '*',
-      methods: ['GET', 'POST'],
+      origin: "*",
+      methods: ["GET", "POST"],
     },
   });
 
-  io.on('connection', (socket: Socket) => {
+  io.on("connection", (socket: Socket) => {
     const userId = socket.handshake.query.userId as string;
 
     if (userId) {
@@ -26,7 +28,7 @@ export const initSocket = (httpServer: HttpServer): SocketIOServer => {
       console.log(`Socket connected: user=${userId} socket=${socket.id}`);
     }
 
-    socket.on('disconnect', () => {
+    socket.on("disconnect", () => {
       if (userId) {
         userSockets.get(userId)?.delete(socket.id);
         if (userSockets.get(userId)?.size === 0) userSockets.delete(userId);
@@ -39,7 +41,7 @@ export const initSocket = (httpServer: HttpServer): SocketIOServer => {
 };
 
 export const getIO = (): SocketIOServer => {
-  if (!io) throw new Error('Socket.IO is not initialized');
+  if (!io) throw new Error("Socket.IO is not initialized");
   return io;
 };
 
@@ -47,10 +49,13 @@ export const getIO = (): SocketIOServer => {
  * Emit a real-time notification to a specific user.
  * Works even if the user has multiple browser tabs open.
  */
-export const emitNotification = (recipientId: string, notification: Partial<INotification> & { _id?: unknown }) => {
+export const emitNotification = (
+  recipientId: string,
+  notification: Partial<INotification> & { _id?: unknown },
+) => {
   try {
     const ioInstance = getIO();
-    ioInstance.to(recipientId).emit('notification', notification);
+    ioInstance.to(recipientId).emit("notification", notification);
   } catch {
     // Socket.IO not yet initialised (e.g. in tests) — silently ignore
   }

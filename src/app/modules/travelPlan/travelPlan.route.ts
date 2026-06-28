@@ -48,7 +48,7 @@ router.patch(
 //get all travel plans
 router.get(
   "/travel-plans",
-  checkAuth(Role.USER, Role.ADMIN),
+  //checkAuth(Role.USER, Role.ADMIN),
   travelPlanControllers.getAllTravelPlans,
 );
 //my travel plan
