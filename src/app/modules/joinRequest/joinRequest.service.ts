@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import AppError from "../../errorHelpers/AppError";
 import { emitNotification } from "../../socket/socket";
 import { NotificationType } from "../notification/notification.interface";
@@ -19,7 +20,7 @@ const sendJoinRequest = async (
   );
   if (!plan) throw new AppError(404, "Travel plan not found");
 
-  const hostId = plan.user.toString();
+  const hostId = (plan.user as any)._id;
   if (hostId === requesterId)
     throw new AppError(400, "You cannot join your own travel plan");
 
