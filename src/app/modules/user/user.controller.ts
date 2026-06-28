@@ -144,7 +144,6 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const result = await UserServices.getAllUsers(
     query as Record<string, string>,
   );
-  console.log({ result });
   sendResponse(res, {
     success: true,
     statusCode: 200,

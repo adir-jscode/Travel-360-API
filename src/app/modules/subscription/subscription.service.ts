@@ -92,9 +92,9 @@ const createSubscription = async (
       customer_email: user.email,
 
       //success_url: `${envVars.CLIENT_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-      success_url: "https://adir.pro.bd",
+      success_url: "http://localhost:3000/user/dashboard/my-profile",
       //cancel_url: `${envVars.CLIENT_URL}/payment/cancel`,
-      cancel_url: "https://adir.pro.bd/#projects",
+      cancel_url: "http://localhost:3000",
 
       metadata: {
         userId: userId,

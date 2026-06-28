@@ -17,7 +17,7 @@ export class QueryBuilder<T> {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete filter[field];
     }
-    console.log("FILTER AFTER EXCLUDE:", filter); // 👈 add this
+
     this.modelQuery = this.modelQuery.find(filter);
 
     return this;

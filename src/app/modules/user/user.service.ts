@@ -50,7 +50,10 @@ const createUser = async (payload: Partial<IUser>) => {
 //all users
 
 const getAllUsers = async (query: Record<string, string>) => {
-  const queryBuilder = new QueryBuilder(User.find(), query);
+  const queryBuilder = new QueryBuilder(
+    User.find({ role: { $ne: "ADMIN" } }),
+    query,
+  );
 
   const users = await queryBuilder
     .search(userSearchableFields)
