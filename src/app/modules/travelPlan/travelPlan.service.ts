@@ -1,6 +1,5 @@
 import { groq } from "../../config/groq.config";
 import AppError from "../../errorHelpers/AppError";
-import { User } from "../user/user.model";
 import { ITravelPlan, TravelType, Visibility } from "./travelPlan.interface";
 import { TravelPlan } from "./travelPlan.model";
 
@@ -8,16 +7,16 @@ const generateTravelPlan = async (
   userId: string,
   payload: Partial<ITravelPlan>,
 ) => {
-  const planCount = await TravelPlan.countDocuments({
-    user: userId,
-  });
-  const user = await User.findById(userId);
-  if (!user?.subscription?.isActive && planCount >= 1) {
-    throw new AppError(
-      403,
-      "Free users can generate only 1 travel plans using AI",
-    );
-  }
+  // const planCount = await TravelPlan.countDocuments({
+  //   user: userId,
+  // });
+  // const user = await User.findById(userId);
+  // if (!user?.subscription?.isActive && planCount >= 1) {
+  //   throw new AppError(
+  //     403,
+  //     "Free users can generate only 1 travel plans using AI",
+  //   );
+  // }
   const { destination, days } = payload;
 
   if (!destination || !days) {
@@ -123,13 +122,8 @@ const createTravelPlan = async (
   userId: string,
   payload: Partial<ITravelPlan>,
 ) => {
-  const planCount = await TravelPlan.countDocuments({
-    user: userId,
-  });
-  const user = await User.findById(userId);
-  if (!user?.subscription?.isActive && planCount >= 3) {
-    throw new AppError(403, "Free users can create only 3 travel plans");
-  }
+  //
+  console.log({ payload });
   const travelPlan = await TravelPlan.create({
     ...payload,
     user: userId,
@@ -247,6 +241,7 @@ const getAllTravelPlans = async (query: Record<string, string>) => {
 
   return result;
 };
+
 const getTravelPlansById = async (id: string) => {
   const result = await TravelPlan.findById(id)
     .populate("user", "name")
@@ -254,7 +249,56 @@ const getTravelPlansById = async (id: string) => {
 
   return result;
 };
+const getMyTravelPlans = async (
+  query: Record<string, string>,
+  userId: string,
+) => {
+  const { country, city, startDate, endDate, visibility } = query;
 
+  const filter: Record<string, unknown> = {
+    user: userId,
+  };
+
+  // Optional visibility filter
+  if (visibility) {
+    filter.visibility = visibility;
+  }
+
+  // Destination country
+  if (country) {
+    filter["destination.country"] = {
+      $regex: country,
+      $options: "i",
+    };
+  }
+
+  // Destination city
+  if (city) {
+    filter["destination.city"] = {
+      $regex: city,
+      $options: "i",
+    };
+  }
+
+  // Date range
+  if (startDate || endDate) {
+    filter.startDate = {};
+
+    if (startDate) {
+      (filter.startDate as Record<string, Date>).$gte = new Date(startDate);
+    }
+
+    if (endDate) {
+      (filter.startDate as Record<string, Date>).$lte = new Date(endDate);
+    }
+  }
+
+  const result = await TravelPlan.find(filter)
+    .populate("user", "name picture email")
+    .sort({ createdAt: -1 });
+
+  return result;
+};
 export const TravelPlanServices = {
   generateTravelPlan,
   createTravelPlan,
@@ -263,4 +307,5 @@ export const TravelPlanServices = {
   toggleVisibility,
   getAllTravelPlans,
   getTravelPlansById,
+  getMyTravelPlans,
 };

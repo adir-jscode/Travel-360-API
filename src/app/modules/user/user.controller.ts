@@ -4,7 +4,6 @@ import { JwtPayload } from "jsonwebtoken";
 
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
-import { IUser } from "./user.interface";
 import { UserServices } from "./user.service";
 
 //register user
@@ -39,14 +38,33 @@ const getUserProfile = async (
     next(error);
   }
 };
+const getMe = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.params.id || (req.user as JwtPayload).userId;
+    console.log(userId);
+    const profile = await UserServices.getMe(userId);
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "User profile fetched successfully",
+      data: profile,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const updateUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user as JwtPayload;
-    const payload: IUser = {
-      ...req.body,
-      picture: req.file?.path,
-    };
+    console.log(req.body);
+    const payload =
+      typeof req.body.data === "string" ? JSON.parse(req.body.data) : req.body;
+
+    if (req.file) {
+      payload.picture = req.file.path;
+    }
+    console.log({ payload });
     const updatedUserInfo = await UserServices.updateUser(
       payload,
       decodedToken,
@@ -122,10 +140,11 @@ const getRecentReviews = catchAsync(async (req: Request, res: Response) => {
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const query = req.query || "";
+  console.log({ query });
   const result = await UserServices.getAllUsers(
     query as Record<string, string>,
   );
-
+  console.log({ result });
   sendResponse(res, {
     success: true,
     statusCode: 200,
@@ -154,4 +173,5 @@ export const UserControllers = {
   getAverageRating,
   getRecentReviews,
   getAllUsers,
+  getMe,
 };

@@ -8,12 +8,11 @@ import {
   createUserZodSchema,
   giveRatingZodSchema,
   giveReviewZodSchema,
-  updateUserZodSchema,
 } from "./user.validation";
 const router = Router();
 
 /*Admin operations*/
-router.get("/", checkAuth(Role.ADMIN), UserControllers.getAllUsers);
+router.get("/", UserControllers.getAllUsers);
 router.delete("/:id", checkAuth(Role.ADMIN), UserControllers.deleteUser);
 
 router.post(
@@ -23,24 +22,21 @@ router.post(
 );
 
 //  public profile view other users
-router.get(
-  "/profile/:id",
-  checkAuth(Role.USER),
-  UserControllers.getUserProfile,
-);
+router.get("/profile/:id", UserControllers.getUserProfile);
 // view profile after login
 router.get(
   "/profile",
   checkAuth(...Object.values(Role)),
   UserControllers.getUserProfile,
 );
+router.get("/me", checkAuth(...Object.values(Role)), UserControllers.getMe);
 
 // all users can update their profile after login
 router.patch(
   "/profile",
   checkAuth(...Object.values(Role)),
   multerUpload.single("file"),
-  validateRequest(updateUserZodSchema),
+  //validateRequest(updateUserZodSchema),
   UserControllers.updateUser,
 );
 /* Post-trip */

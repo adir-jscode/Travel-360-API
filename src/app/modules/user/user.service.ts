@@ -52,7 +52,7 @@ const createUser = async (payload: Partial<IUser>) => {
 const getAllUsers = async (query: Record<string, string>) => {
   const queryBuilder = new QueryBuilder(User.find(), query);
 
-  const tours = await queryBuilder
+  const users = await queryBuilder
     .search(userSearchableFields)
     .filter()
     .sort()
@@ -60,12 +60,12 @@ const getAllUsers = async (query: Record<string, string>) => {
     .paginate();
 
   // const meta = await queryBuilder.getMeta()
-
+  console.log({ users });
   const [data, meta] = await Promise.all([
-    tours.build(),
+    users.build(),
     queryBuilder.getMeta(),
   ]);
-
+  console.log({ data });
   return {
     data,
     meta,
@@ -100,9 +100,6 @@ const updateUser = async (
     throw new AppError(400, "User not found");
   }
   if (payload.role) {
-    if (decodedToken.role === Role.USER || decodedToken.role === Role.GUIDE) {
-      throw new AppError(403, "You are not authorized");
-    }
     if (payload.role === Role.SUPER_ADMIN && decodedToken.role === Role.ADMIN) {
       throw new AppError(403, "You are not authorized");
     }
@@ -118,10 +115,12 @@ const updateUser = async (
       Number(envVars.BCRYPT_SALT_ROUND),
     );
   }
+
   const updatedUserInfo = await User.findByIdAndUpdate(userId, payload, {
     new: true,
     runValidators: true,
   });
+  console.log({ updatedUserInfo });
   return updatedUserInfo;
 };
 
@@ -228,6 +227,16 @@ const deleteUser = async (userId: string) => {
   return result;
 };
 
+const getMe = async (userId: string) => {
+  const user = await User.findById(userId).select(
+    "-password -isDeleted -isActive -isVerified -createdAt -updatedAt -auths",
+  );
+  if (!user) {
+    throw new AppError(400, "User not found");
+  }
+  return user;
+};
+
 export const UserServices = {
   createUser,
   getUserProfile,
@@ -238,4 +247,5 @@ export const UserServices = {
   giveReview,
   getAverageRating,
   getRecentReviews,
+  getMe,
 };

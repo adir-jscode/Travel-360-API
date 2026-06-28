@@ -11,6 +11,7 @@ const generateTravelPlan = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user as JwtPayload;
     const userId = decodedToken.userId;
+    console.log(userId);
     if (!userId) {
       throw new AppError(401, "Unauthorized");
     }
@@ -28,6 +29,7 @@ const generateTravelPlan = catchAsync(
 );
 const createTravelPlan = catchAsync(async (req, res) => {
   const decodedToken = req.user as JwtPayload;
+  console.log(req.body);
 
   const result = await TravelPlanServices.createTravelPlan(
     decodedToken.userId,
@@ -100,6 +102,21 @@ const getAllTravelPlans = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getMyTravelPlans = catchAsync(async (req, res) => {
+  const user = req.user as JwtPayload;
+  const userId = user?.userId;
+  const result = await TravelPlanServices.getMyTravelPlans(
+    req.query as Record<string, string>,
+    userId as string,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Travel plans retrieved successfully",
+    data: result,
+  });
+});
 const getTravelPlansById = catchAsync(async (req, res) => {
   const id = req.params.id;
   const result = await TravelPlanServices.getTravelPlansById(id);
@@ -120,4 +137,5 @@ export const travelPlanControllers = {
   toggleVisibility,
   getAllTravelPlans,
   getTravelPlansById,
+  getMyTravelPlans,
 };

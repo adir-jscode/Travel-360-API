@@ -7,7 +7,6 @@ export interface AuthTokens {
 
 export const setAuthCookie = (res: Response, tokenInfo: AuthTokens) => {
   if (tokenInfo.accessToken) {
-    console.log("token setting from backend");
     res.cookie("accessToken", tokenInfo.accessToken, {
       httpOnly: true,
       secure: false,
