@@ -36,7 +36,8 @@ exports.createUserZodSchema = zod_1.default.object({
     currentLocation: zod_1.default
         .string({ error: "current Location must be string" })
         .min(2, { message: "current Location must be at least 2 characters long." })
-        .max(50, { message: "current Location cannot exceed 50 characters." }),
+        .max(50, { message: "current Location cannot exceed 50 characters." })
+        .optional(),
 });
 // name, phone,picture,bio,travelInterest,visitedCountries,currentLocation
 exports.updateUserZodSchema = zod_1.default.object({

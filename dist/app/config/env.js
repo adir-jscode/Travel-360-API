@@ -32,6 +32,11 @@ const loadEnvVariables = () => {
         "STRIPE_WEBHOOK_SECRET",
         "CLIENT_URL",
         "SERVER_URL",
+        "SMTP_HOST",
+        "SMTP_PORT",
+        "SMTP_USER",
+        "SMTP_PASS",
+        "SMTP_FROM",
         "NODE_ENV",
     ];
     requiredEnvVariables.forEach((key) => {
@@ -64,6 +69,11 @@ const loadEnvVariables = () => {
         CLIENT_URL: process.env.CLIENT_URL,
         SERVER_URL: process.env.SERVER_URL,
         URL: process.env.URL,
+        SMTP_HOST: process.env.SMTP_HOST,
+        SMTP_PORT: process.env.SMTP_PORT,
+        SMTP_USER: process.env.SMTP_USER,
+        SMTP_PASS: process.env.SMTP_PASS,
+        SMTP_FROM: process.env.SMTP_FROM,
         NODE_ENV: process.env.NODE_ENV,
     };
 };

@@ -27,7 +27,16 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors());
+// BUG FIX 1: Apply CORS with correct origin + credentials config ONCE, before
+// routes. The original code called cors() (wildcard, no credentials) first,
+// then a properly-configured cors() AFTER the routes — which never ran for
+// API requests. This caused cookies/auth headers to be stripped on all requests.
+app.use(
+  cors({
+    origin: [envVars.URL as string, "http://localhost:3000"],
+    credentials: true,
+  }),
+);
 
 app.use("/api/v1", router);
 
@@ -36,13 +45,6 @@ app.get("/", (req, res) => {
     message: "Welcome to travel-360 backend 🚀",
   });
 });
-
-app.use(
-  cors({
-    origin: [envVars.URL as string, "http://localhost:3000"],
-    credentials: true,
-  }),
-);
 
 app.use(globalErrorHandler);
 

@@ -39,9 +39,31 @@ const getUserProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         next(error);
     }
 });
+const getMe = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.params.id || req.user.userId;
+        console.log(userId);
+        const profile = yield user_service_1.UserServices.getMe(userId);
+        (0, sendResponse_1.sendResponse)(res, {
+            success: true,
+            statusCode: 200,
+            message: "User profile fetched successfully",
+            data: profile,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
 const updateUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const decodedToken = req.user;
-    const updatedUserInfo = yield user_service_1.UserServices.updateUser(req.body, decodedToken);
+    console.log(req.body);
+    const payload = typeof req.body.data === "string" ? JSON.parse(req.body.data) : req.body;
+    if (req.file) {
+        payload.picture = req.file.path;
+    }
+    console.log({ payload });
+    const updatedUserInfo = yield user_service_1.UserServices.updateUser(payload, decodedToken);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: 200,
@@ -93,6 +115,7 @@ const getRecentReviews = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(vo
 }));
 const getAllUsers = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const query = req.query || "";
+    console.log({ query });
     const result = yield user_service_1.UserServices.getAllUsers(query);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
@@ -120,4 +143,5 @@ exports.UserControllers = {
     getAverageRating,
     getRecentReviews,
     getAllUsers,
+    getMe,
 };

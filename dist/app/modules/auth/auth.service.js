@@ -25,9 +25,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthServices = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const env_1 = require("../../config/env");
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
 const jwt_1 = require("../../utils/jwt");
+const sendEmail_1 = require("../../utils/sendEmail");
 const userTokens_1 = require("../../utils/userTokens");
 const user_interface_1 = require("../user/user.interface");
 const user_model_1 = require("../user/user.model");
@@ -99,8 +101,93 @@ const resetPassword = (oldPassword, newPassword, decodedToken) => __awaiter(void
     user.password = hashNewPassword;
     yield user.save();
 });
+const forgotPassword = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    const isUserExist = yield user_model_1.User.findOne({ email });
+    if (!isUserExist) {
+        throw new AppError_1.default(400, "User does not exist");
+    }
+    if (!isUserExist.isVerified) {
+        throw new AppError_1.default(400, "User is not verified");
+    }
+    if (isUserExist.isActive === user_interface_1.IsActive.BLOCKED ||
+        isUserExist.isActive === user_interface_1.IsActive.INACTIVE) {
+        throw new AppError_1.default(400, `User is ${isUserExist.isActive}`);
+    }
+    if (isUserExist.isDeleted) {
+        throw new AppError_1.default(400, "User is deleted");
+    }
+    const jwtPayload = {
+        userId: isUserExist._id,
+        email: isUserExist.email,
+        role: isUserExist.role,
+    };
+    const resetToken = jsonwebtoken_1.default.sign(jwtPayload, env_1.envVars.ACCESS_TOKEN_EXPIRE, {
+        expiresIn: "10m",
+    });
+    const resetUILink = `${env_1.envVars.FRONTEND_URL}/reset-password?id=${isUserExist._id}&token=${resetToken}`;
+    yield (0, sendEmail_1.sendEmail)({
+        to: isUserExist.email,
+        subject: "Password Reset",
+        templateName: "forgetPassword",
+        templateData: {
+            name: isUserExist.name,
+            resetUILink,
+        },
+    });
+});
+const googleOAuthLogin = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const { name, email, picture, providerId } = payload;
+    if (!email || !name || !providerId) {
+        throw new AppError_1.default(400, "Missing required Google OAuth fields");
+    }
+    let user = yield user_model_1.User.findOne({ email });
+    if (!user) {
+        // New user — create with GOOGLE provider
+        const googleAuthProvider = {
+            provider: "GOOGLE",
+            providerId,
+        };
+        user = yield user_model_1.User.create({
+            name,
+            email,
+            picture,
+            role: user_interface_1.Role.USER,
+            isVerified: true,
+            isActive: user_interface_1.IsActive.ACTIVE,
+            auths: [googleAuthProvider],
+            subscription: { isActive: false },
+        });
+    }
+    else {
+        // Existing user — check they're not blocked/deleted
+        if (user.isActive === user_interface_1.IsActive.BLOCKED ||
+            user.isActive === user_interface_1.IsActive.INACTIVE) {
+            throw new AppError_1.default(400, `User is ${user.isActive}`);
+        }
+        if (user.isDeleted) {
+            throw new AppError_1.default(400, "User is deleted");
+        }
+        // Add GOOGLE provider to auths if not already present
+        const alreadyHasGoogle = (_a = user.auths) === null || _a === void 0 ? void 0 : _a.some((a) => a.provider === "GOOGLE");
+        if (!alreadyHasGoogle) {
+            user.auths = [...(user.auths || []), { provider: "GOOGLE", providerId }];
+            yield user.save();
+        }
+    }
+    const tokens = (0, userTokens_1.createUserTokens)(user);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _b = user.toObject(), { password: _pass } = _b, rest = __rest(_b, ["password"]);
+    return {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        user: rest,
+    };
+});
 exports.AuthServices = {
     credentialLogin,
     getNewAccessToken,
     resetPassword,
+    forgotPassword,
+    googleOAuthLogin,
 };

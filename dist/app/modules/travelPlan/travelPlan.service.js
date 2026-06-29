@@ -15,18 +15,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TravelPlanServices = void 0;
 const groq_config_1 = require("../../config/groq.config");
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
-const user_model_1 = require("../user/user.model");
 const travelPlan_interface_1 = require("./travelPlan.interface");
 const travelPlan_model_1 = require("./travelPlan.model");
 const generateTravelPlan = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
-    const planCount = yield travelPlan_model_1.TravelPlan.countDocuments({
-        user: userId,
-    });
-    const user = yield user_model_1.User.findById(userId);
-    if (!((_a = user === null || user === void 0 ? void 0 : user.subscription) === null || _a === void 0 ? void 0 : _a.isActive) && planCount >= 1) {
-        throw new AppError_1.default(403, "Free users can generate only 1 travel plans using AI");
-    }
+    var _a, _b;
+    // const planCount = await TravelPlan.countDocuments({
+    //   user: userId,
+    // });
+    // const user = await User.findById(userId);
+    // if (!user?.subscription?.isActive && planCount >= 1) {
+    //   throw new AppError(
+    //     403,
+    //     "Free users can generate only 1 travel plans using AI",
+    //   );
+    // }
     const { destination, days } = payload;
     if (!destination || !days) {
         throw new AppError_1.default(400, "Destination and days are required");
@@ -75,7 +77,7 @@ Rules:
             ],
             temperature: 0.5,
         });
-        const text = (_c = (_b = response.choices[0]) === null || _b === void 0 ? void 0 : _b.message) === null || _c === void 0 ? void 0 : _c.content;
+        const text = (_b = (_a = response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content;
         if (!text) {
             throw new AppError_1.default(400, "Failed to generate travel plan");
         }
@@ -109,26 +111,21 @@ Rules:
 });
 //create travel plan by user
 const createTravelPlan = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const planCount = yield travelPlan_model_1.TravelPlan.countDocuments({
-        user: userId,
-    });
-    const user = yield user_model_1.User.findById(userId);
-    if (!((_a = user === null || user === void 0 ? void 0 : user.subscription) === null || _a === void 0 ? void 0 : _a.isActive) && planCount >= 3) {
-        throw new AppError_1.default(403, "Free users can create only 3 travel plans");
-    }
+    //
+    console.log({ payload });
     const travelPlan = yield travelPlan_model_1.TravelPlan.create(Object.assign(Object.assign({}, payload), { user: userId }));
     return travelPlan;
 });
 // update travel plan
 const updateTravelPlan = (userId, planId, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const travelPlan = yield travelPlan_model_1.TravelPlan.findOne({
-        _id: planId,
-        user: userId,
-    });
-    if (!travelPlan) {
-        throw new AppError_1.default(404, "Travel plan not found");
-    }
+    console.log({ planId, userId });
+    // const travelPlan = await TravelPlan.findOne({
+    //   _id: planId,
+    //   user: userId,
+    // });
+    // if (!travelPlan) {
+    //   throw new AppError(404, "Travel plan not found");
+    // }
     const updatedPlan = yield travelPlan_model_1.TravelPlan.findByIdAndUpdate(planId, payload, {
         new: true,
         runValidators: true,
@@ -195,6 +192,50 @@ const getAllTravelPlans = (query) => __awaiter(void 0, void 0, void 0, function*
         .sort({ createdAt: -1 });
     return result;
 });
+const getTravelPlansById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield travelPlan_model_1.TravelPlan.findById(id)
+        .populate("user", "name")
+        .sort({ createdAt: -1 });
+    return result;
+});
+const getMyTravelPlans = (query, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const { country, city, startDate, endDate, visibility } = query;
+    const filter = {
+        user: userId,
+    };
+    // Optional visibility filter
+    if (visibility) {
+        filter.visibility = visibility;
+    }
+    // Destination country
+    if (country) {
+        filter["destination.country"] = {
+            $regex: country,
+            $options: "i",
+        };
+    }
+    // Destination city
+    if (city) {
+        filter["destination.city"] = {
+            $regex: city,
+            $options: "i",
+        };
+    }
+    // Date range
+    if (startDate || endDate) {
+        filter.startDate = {};
+        if (startDate) {
+            filter.startDate.$gte = new Date(startDate);
+        }
+        if (endDate) {
+            filter.startDate.$lte = new Date(endDate);
+        }
+    }
+    const result = yield travelPlan_model_1.TravelPlan.find(filter)
+        .populate("user", "name picture email")
+        .sort({ createdAt: -1 });
+    return result;
+});
 exports.TravelPlanServices = {
     generateTravelPlan,
     createTravelPlan,
@@ -202,4 +243,6 @@ exports.TravelPlanServices = {
     deleteTravelPlan,
     toggleVisibility,
     getAllTravelPlans,
+    getTravelPlansById,
+    getMyTravelPlans,
 };

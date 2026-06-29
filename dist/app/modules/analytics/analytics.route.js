@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AnalyticsRoutes = void 0;
+const express_1 = __importDefault(require("express"));
+const checkAuth_1 = require("../../middlewares/checkAuth");
+const user_interface_1 = require("../user/user.interface");
+const analytics_controller_1 = require("./analytics.controller");
+const router = express_1.default.Router();
+const adminAuth = (0, checkAuth_1.checkAuth)(user_interface_1.Role.ADMIN, user_interface_1.Role.SUPER_ADMIN);
+router.get("/dashboard", adminAuth, analytics_controller_1.AnalyticsController.getDashboardSummary);
+router.get("/users", adminAuth, analytics_controller_1.AnalyticsController.getUserStats);
+router.get("/travel-plans", adminAuth, analytics_controller_1.AnalyticsController.getTravelPlanStats);
+router.get("/payments", adminAuth, analytics_controller_1.AnalyticsController.getPaymentStats);
+router.get("/subscriptions", adminAuth, analytics_controller_1.AnalyticsController.getSubscriptionStats);
+router.get("/trips", adminAuth, analytics_controller_1.AnalyticsController.getTripStats);
+router.get("/reviews", adminAuth, analytics_controller_1.AnalyticsController.getReviewStats);
+router.get("/join-requests", adminAuth, analytics_controller_1.AnalyticsController.getJoinRequestStats);
+exports.AnalyticsRoutes = router;

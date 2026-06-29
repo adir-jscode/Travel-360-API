@@ -60,18 +60,20 @@ const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
 });
 //all users
 const getAllUsers = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    const queryBuilder = new QueryBuilder_1.QueryBuilder(user_model_1.User.find(), query);
-    const tours = yield queryBuilder
+    const queryBuilder = new QueryBuilder_1.QueryBuilder(user_model_1.User.find({ role: { $ne: "ADMIN" } }), query);
+    const users = yield queryBuilder
         .search(user_constant_1.userSearchableFields)
         .filter()
         .sort()
         .fields()
         .paginate();
     // const meta = await queryBuilder.getMeta()
+    console.log({ users });
     const [data, meta] = yield Promise.all([
-        tours.build(),
+        users.build(),
         queryBuilder.getMeta(),
     ]);
+    console.log({ data });
     return {
         data,
         meta,
@@ -97,9 +99,6 @@ const updateUser = (payload, decodedToken) => __awaiter(void 0, void 0, void 0, 
         throw new AppError_1.default(400, "User not found");
     }
     if (payload.role) {
-        if (decodedToken.role === user_interface_1.Role.USER || decodedToken.role === user_interface_1.Role.GUIDE) {
-            throw new AppError_1.default(403, "You are not authorized");
-        }
         if (payload.role === user_interface_1.Role.SUPER_ADMIN && decodedToken.role === user_interface_1.Role.ADMIN) {
             throw new AppError_1.default(403, "You are not authorized");
         }
@@ -116,6 +115,7 @@ const updateUser = (payload, decodedToken) => __awaiter(void 0, void 0, void 0, 
         new: true,
         runValidators: true,
     });
+    console.log({ updatedUserInfo });
     return updatedUserInfo;
 });
 // give user a rating between 1 to 5
@@ -184,6 +184,13 @@ const deleteUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_model_1.User.findByIdAndDelete(userId);
     return result;
 });
+const getMe = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findById(userId).select("-password -isDeleted -isActive -isVerified -createdAt -updatedAt -auths");
+    if (!user) {
+        throw new AppError_1.default(400, "User not found");
+    }
+    return user;
+});
 exports.UserServices = {
     createUser,
     getUserProfile,
@@ -194,4 +201,5 @@ exports.UserServices = {
     giveReview,
     getAverageRating,
     getRecentReviews,
+    getMe,
 };

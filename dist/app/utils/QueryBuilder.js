@@ -32,12 +32,20 @@ class QueryBuilder {
                 [field]: { $regex: searchTerm, $options: "i" },
             })),
         };
+        console.log("SEARCH QUERY:", JSON.stringify(searchQuery, null, 2)); // 👈
         this.modelQuery = this.modelQuery.find(searchQuery);
         return this;
     }
     sort() {
-        const sort = this.query.sort || "-createdAt";
-        this.modelQuery = this.modelQuery.sort(sort);
+        const { sort, sortBy, sortOrder } = this.query;
+        let sortString;
+        if (sortBy) {
+            sortString = sortOrder === "asc" ? sortBy : `-${sortBy}`;
+        }
+        else {
+            sortString = sort || "-createdAt";
+        }
+        this.modelQuery = this.modelQuery.sort(sortString);
         return this;
     }
     fields() {

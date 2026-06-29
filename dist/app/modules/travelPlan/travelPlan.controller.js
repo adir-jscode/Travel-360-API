@@ -20,6 +20,7 @@ const travelPlan_service_1 = require("./travelPlan.service");
 const generateTravelPlan = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const decodedToken = req.user;
     const userId = decodedToken.userId;
+    console.log(userId);
     if (!userId) {
         throw new AppError_1.default(401, "Unauthorized");
     }
@@ -33,6 +34,7 @@ const generateTravelPlan = (0, catchAsync_1.catchAsync)((req, res, next) => __aw
 }));
 const createTravelPlan = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const decodedToken = req.user;
+    console.log(req.body);
     const result = yield travelPlan_service_1.TravelPlanServices.createTravelPlan(decodedToken.userId, req.body);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
@@ -43,6 +45,7 @@ const createTravelPlan = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(vo
 }));
 const updateTravelPlan = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const decodedToken = req.user;
+    console.log(req.params.id);
     const result = yield travelPlan_service_1.TravelPlanServices.updateTravelPlan(decodedToken.userId, req.params.id, req.body);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
@@ -80,6 +83,27 @@ const getAllTravelPlans = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(v
         data: result,
     });
 }));
+const getMyTravelPlans = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const userId = user === null || user === void 0 ? void 0 : user.userId;
+    const result = yield travelPlan_service_1.TravelPlanServices.getMyTravelPlans(req.query, userId);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: 200,
+        message: "Travel plans retrieved successfully",
+        data: result,
+    });
+}));
+const getTravelPlansById = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const result = yield travelPlan_service_1.TravelPlanServices.getTravelPlansById(id);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: 200,
+        message: "Travel plans retrieved successfully",
+        data: result,
+    });
+}));
 exports.travelPlanControllers = {
     generateTravelPlan,
     createTravelPlan,
@@ -87,4 +111,6 @@ exports.travelPlanControllers = {
     deleteTravelPlan,
     toggleVisibility,
     getAllTravelPlans,
+    getTravelPlansById,
+    getMyTravelPlans,
 };

@@ -21,7 +21,9 @@ const sendJoinRequest = async (
   if (!plan) throw new AppError(404, "Travel plan not found");
 
   const hostId = (plan.user as any)._id;
-  if (hostId === requesterId)
+  // BUG FIX 2: ObjectId === string always returns false in JS/TS. Use .toString()
+  // so the check actually prevents users from requesting to join their own plans.
+  if (hostId.toString() === requesterId)
     throw new AppError(400, "You cannot join your own travel plan");
 
   // Prevent duplicate active requests
@@ -65,7 +67,10 @@ const sendJoinRequest = async (
     },
   });
 
-  emitNotification(hostId, notif.toObject());
+  // BUG FIX 3: Socket rooms are keyed by userId as a STRING. hostId here is a
+  // Mongoose ObjectId — emitting to it never reaches any connected socket.
+  // Convert to string so io.to(recipientId) finds the correct room.
+  emitNotification(hostId.toString(), notif.toObject());
 
   return joinRequest;
 };

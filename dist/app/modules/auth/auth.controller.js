@@ -70,9 +70,42 @@ const resetPassword = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter
         data: null,
     });
 }));
+const forgotPassword = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    yield auth_service_1.AuthServices.forgotPassword(email);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: 200,
+        message: "Email Sent Successfully",
+        data: null,
+    });
+}));
+const googleOAuthLogin = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.body);
+    const { name, email, picture, providerId } = req.body;
+    if (!name || !email || !providerId) {
+        throw new AppError_1.default(400, "name, email and providerId are required");
+    }
+    const loginInfo = yield auth_service_1.AuthServices.googleOAuthLogin({
+        name,
+        email,
+        picture,
+        providerId,
+    });
+    console.log({ loginInfo });
+    (0, serAuthCookie_1.setAuthCookie)(res, loginInfo);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: 200,
+        message: "Google OAuth login successful",
+        data: loginInfo,
+    });
+}));
 exports.AuthControllers = {
     credentialLogin,
     getNewAccessToken,
     logout,
     resetPassword,
+    forgotPassword,
+    googleOAuthLogin,
 };
