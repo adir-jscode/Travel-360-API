@@ -41,8 +41,6 @@ const respondToRequest = catchAsync(async (req, res) => {
 /** GET /api/v1/join-request/incoming — requests for host's plans */
 const getIncomingRequests = catchAsync(async (req, res) => {
   const { userId } = req.user as JwtPayload;
-  console.log("Incoming");
-  console.log({ userId });
   const data = await JoinRequestServices.getRequestsForMyPlans(userId);
   sendResponse(res, {
     success: true,
