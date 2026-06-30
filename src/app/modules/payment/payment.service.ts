@@ -112,4 +112,19 @@ const paymentSuccess = async (stripeSession: Stripe.Checkout.Session) => {
   }
 };
 
-export const PaymentServices = { paymentSuccess };
+const getMyPayments = async (userId: string) => {
+  const payments = await Payment.find({ user: userId })
+    .populate({
+      path: "subscription",
+      select: "plan status paidAt expiresAt subscriptionPlan",
+      populate: {
+        path: "subscriptionPlan",
+        select: "name title price duration",
+      },
+    })
+    .sort({ createdAt: -1 });
+
+  return payments;
+};
+
+export const PaymentServices = { paymentSuccess, getMyPayments };

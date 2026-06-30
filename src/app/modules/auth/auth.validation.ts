@@ -46,3 +46,35 @@ export const restPasswordZodSchema = z.object({
       message: "Password must contain at least 1 number.",
     }),
 });
+
+export const forgotPasswordZodSchema = z.object({
+  email: z
+    .string({ error: "Email must be string" })
+    .email({ message: "Invalid email address format." }),
+});
+
+const strongPasswordZodSchema = z
+  .string({ error: "Password must be string" })
+  .min(8, { message: "Password must be at least 8 characters long." })
+  .regex(/^(?=.*[A-Z])/, {
+    message: "Password must contain at least 1 uppercase letter.",
+  })
+  .regex(/^(?=.*[!@#$%^&*])/, {
+    message: "Password must contain at least 1 special character.",
+  })
+  .regex(/^(?=.*\d)/, {
+    message: "Password must contain at least 1 number.",
+  });
+export const resetPasswordZodSchema = z.object({
+  id: z.string({ error: "User id is required" }).min(1, {
+    message: "User id is required",
+  }),
+  token: z.string({ error: "Reset token is required" }).min(1, {
+    message: "Reset token is required",
+  }),
+  newPassword: strongPasswordZodSchema,
+});
+export const changePasswordZodSchema = z.object({
+  oldPassword: strongPasswordZodSchema,
+  newPassword: strongPasswordZodSchema,
+});

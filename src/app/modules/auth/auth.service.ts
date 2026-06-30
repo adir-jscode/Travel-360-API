@@ -134,9 +134,10 @@ const forgotPassword = async (email: string) => {
     userId: isUserExist._id,
     email: isUserExist.email,
     role: isUserExist.role,
+    purpose: "PASSWORD_RESET",
   };
 
-  const resetToken = jwt.sign(jwtPayload, envVars.ACCESS_TOKEN_EXPIRE, {
+  const resetToken = jwt.sign(jwtPayload, envVars.JWT_SECRET, {
     expiresIn: "10m",
   });
 
@@ -212,10 +213,95 @@ const googleOAuthLogin = async (payload: {
     user: rest,
   };
 };
+
+const resetPasswordWithToken = async (
+  id: string,
+  token: string,
+  newPassword: string,
+) => {
+  let decoded: JwtPayload;
+  console.log("service", id, token, newPassword);
+  try {
+    decoded = verifyToken(token, envVars.JWT_SECRET) as JwtPayload;
+  } catch {
+    throw new AppError(401, "Reset link is invalid or has expired");
+  }
+
+  if (decoded.purpose !== "PASSWORD_RESET") {
+    throw new AppError(401, "Invalid reset token");
+  }
+  console.log(decoded.id);
+  console.log("id from payload", id);
+  if (decoded.userId !== id) {
+    throw new AppError(401, "Reset link is invalid or has expired");
+  }
+
+  const user = await User.findById(id);
+  if (!user) {
+    throw new AppError(404, "User not found");
+  }
+  if (user.isDeleted) {
+    throw new AppError(400, "User is deleted");
+  }
+  if (
+    user.isActive === IsActive.BLOCKED ||
+    user.isActive === IsActive.INACTIVE
+  ) {
+    throw new AppError(400, `User is ${user.isActive}`);
+  }
+
+  const isSamePassword = await bcryptjs.compare(
+    newPassword,
+    user.password as string,
+  );
+  if (isSamePassword) {
+    throw new AppError(400, "New password must be different from old password");
+  }
+
+  user.password = await bcryptjs.hash(
+    newPassword,
+    Number(envVars.BCRYPT_SALT_ROUND),
+  );
+
+  await user.save();
+};
+
+const changePassword = async (
+  oldPassword: string,
+  newPassword: string,
+  decodedToken: JwtPayload,
+) => {
+  const user = await User.findById(decodedToken.userId);
+  if (!user) {
+    throw new AppError(400, "user not found");
+  }
+  const isOldPasswordMatch = await bcryptjs.compare(
+    oldPassword,
+    user.password as string,
+  );
+
+  if (!isOldPasswordMatch) {
+    throw new AppError(401, "Old password does not match");
+  }
+  if (newPassword === oldPassword) {
+    throw new AppError(400, "New password must be different from old password");
+  }
+
+  const hashNewPassword = await bcryptjs.hash(
+    newPassword as string,
+    Number(envVars.BCRYPT_SALT_ROUND),
+  );
+
+  user.password = hashNewPassword;
+
+  await user.save();
+};
 export const AuthServices = {
   credentialLogin,
   getNewAccessToken,
   resetPassword,
   forgotPassword,
   googleOAuthLogin,
+  resetPasswordWithToken,
+  changePassword,
 };

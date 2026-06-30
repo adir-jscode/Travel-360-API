@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { JwtPayload } from "jsonwebtoken";
 import Stripe from "stripe";
 import { envVars } from "../../config/env";
 import { stripe } from "../../config/stripe";
@@ -47,4 +48,15 @@ const handleWebhook = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const PaymentControllers = { handleWebhook };
+const getMyPayments = catchAsync(async (req: Request, res: Response) => {
+  const decodedToken = req.user as JwtPayload;
+  const payments = await PaymentServices.getMyPayments(decodedToken.userId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Payment history retrieved successfully",
+    data: payments,
+  });
+});
+export const PaymentControllers = { handleWebhook, getMyPayments };

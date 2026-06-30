@@ -58,13 +58,18 @@ const getNewAccessToken = catchAsync(
 
 const resetPassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { oldPassword, newPassword } = req.body;
-    const decodedToken = req.user as JwtPayload;
-    await AuthServices.resetPassword(oldPassword, newPassword, decodedToken);
+    const { id, token, newPassword } = req.body;
+    console.log(req.body);
+    console.log("id", id);
+    console.log(token);
+    console.log(newPassword);
+
+    await AuthServices.resetPasswordWithToken(id, token, newPassword);
+
     sendResponse(res, {
       success: true,
       statusCode: 200,
-      message: "Password Changed Successfully",
+      message: "Password Reset Successfully",
       data: null,
     });
   },
@@ -113,6 +118,20 @@ const googleOAuthLogin = catchAsync(
   },
 );
 
+const changePassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { oldPassword, newPassword } = req.body;
+    const decodedToken = req.user as JwtPayload;
+    await AuthServices.changePassword(oldPassword, newPassword, decodedToken);
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Password Changed Successfully",
+      data: null,
+    });
+  },
+);
+
 export const AuthControllers = {
   credentialLogin,
   getNewAccessToken,
@@ -120,4 +139,5 @@ export const AuthControllers = {
   resetPassword,
   forgotPassword,
   googleOAuthLogin,
+  changePassword,
 };
