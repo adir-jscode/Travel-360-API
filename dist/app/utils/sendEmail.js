@@ -20,7 +20,6 @@ const path_1 = __importDefault(require("path"));
 const env_1 = require("../config/env");
 const AppError_1 = __importDefault(require("../errorHelpers/AppError"));
 const transporter = nodemailer_1.default.createTransport({
-    // port: envVarsSMTP_PORT,
     secure: true,
     auth: {
         user: env_1.envVars.SMTP_USER,

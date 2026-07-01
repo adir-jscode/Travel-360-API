@@ -60,13 +60,16 @@ const getNewAccessToken = (0, catchAsync_1.catchAsync)((req, res, next) => __awa
     });
 }));
 const resetPassword = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { oldPassword, newPassword } = req.body;
-    const decodedToken = req.user;
-    yield auth_service_1.AuthServices.resetPassword(oldPassword, newPassword, decodedToken);
+    const { id, token, newPassword } = req.body;
+    console.log(req.body);
+    console.log("id", id);
+    console.log(token);
+    console.log(newPassword);
+    yield auth_service_1.AuthServices.resetPasswordWithToken(id, token, newPassword);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: 200,
-        message: "Password Changed Successfully",
+        message: "Password Reset Successfully",
         data: null,
     });
 }));
@@ -101,6 +104,17 @@ const googleOAuthLogin = (0, catchAsync_1.catchAsync)((req, res, next) => __awai
         data: loginInfo,
     });
 }));
+const changePassword = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { oldPassword, newPassword } = req.body;
+    const decodedToken = req.user;
+    yield auth_service_1.AuthServices.changePassword(oldPassword, newPassword, decodedToken);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: 200,
+        message: "Password Changed Successfully",
+        data: null,
+    });
+}));
 exports.AuthControllers = {
     credentialLogin,
     getNewAccessToken,
@@ -108,4 +122,5 @@ exports.AuthControllers = {
     resetPassword,
     forgotPassword,
     googleOAuthLogin,
+    changePassword,
 };

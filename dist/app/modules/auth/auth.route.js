@@ -13,6 +13,7 @@ router.post("/login", rateLimiter_1.rateLimiters.authLimiter, (0, validateReques
 router.post("/google-oauth", auth_controller_1.AuthControllers.googleOAuthLogin);
 router.post("/refresh-token", auth_controller_1.AuthControllers.getNewAccessToken);
 router.post("/logout", auth_controller_1.AuthControllers.logout);
-router.post("/reset-password", (0, checkAuth_1.checkAuth)(...Object.values(user_interface_1.Role)), auth_controller_1.AuthControllers.resetPassword);
-router.post("/forgot-password", auth_controller_1.AuthControllers.forgotPassword);
+router.post("/reset-password", (0, validateRequest_1.validateRequest)(auth_validation_1.resetPasswordZodSchema), auth_controller_1.AuthControllers.resetPassword);
+router.post("/forgot-password", rateLimiter_1.rateLimiters.authLimiter, (0, validateRequest_1.validateRequest)(auth_validation_1.forgotPasswordZodSchema), auth_controller_1.AuthControllers.forgotPassword);
+router.post("/change-password", (0, checkAuth_1.checkAuth)(...Object.values(user_interface_1.Role)), (0, validateRequest_1.validateRequest)(auth_validation_1.changePasswordZodSchema), auth_controller_1.AuthControllers.changePassword);
 exports.AuthRoutes = router;

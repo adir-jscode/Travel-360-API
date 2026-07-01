@@ -120,11 +120,12 @@ const forgotPassword = (email) => __awaiter(void 0, void 0, void 0, function* ()
         userId: isUserExist._id,
         email: isUserExist.email,
         role: isUserExist.role,
+        purpose: "PASSWORD_RESET",
     };
-    const resetToken = jsonwebtoken_1.default.sign(jwtPayload, env_1.envVars.ACCESS_TOKEN_EXPIRE, {
+    const resetToken = jsonwebtoken_1.default.sign(jwtPayload, env_1.envVars.JWT_SECRET, {
         expiresIn: "10m",
     });
-    const resetUILink = `${env_1.envVars.FRONTEND_URL}/reset-password?id=${isUserExist._id}&token=${resetToken}`;
+    const resetUILink = `${env_1.envVars.URL}/reset-password?id=${isUserExist._id}&token=${resetToken}`;
     yield (0, sendEmail_1.sendEmail)({
         to: isUserExist.email,
         subject: "Password Reset",
@@ -184,10 +185,63 @@ const googleOAuthLogin = (payload) => __awaiter(void 0, void 0, void 0, function
         user: rest,
     };
 });
+const resetPasswordWithToken = (id, token, newPassword) => __awaiter(void 0, void 0, void 0, function* () {
+    let decoded;
+    console.log("service", id, token, newPassword);
+    try {
+        decoded = (0, jwt_1.verifyToken)(token, env_1.envVars.JWT_SECRET);
+    }
+    catch (_a) {
+        throw new AppError_1.default(401, "Reset link is invalid or has expired");
+    }
+    if (decoded.purpose !== "PASSWORD_RESET") {
+        throw new AppError_1.default(401, "Invalid reset token");
+    }
+    console.log(decoded.id);
+    console.log("id from payload", id);
+    if (decoded.userId !== id) {
+        throw new AppError_1.default(401, "Reset link is invalid or has expired");
+    }
+    const user = yield user_model_1.User.findById(id);
+    if (!user) {
+        throw new AppError_1.default(404, "User not found");
+    }
+    if (user.isDeleted) {
+        throw new AppError_1.default(400, "User is deleted");
+    }
+    if (user.isActive === user_interface_1.IsActive.BLOCKED ||
+        user.isActive === user_interface_1.IsActive.INACTIVE) {
+        throw new AppError_1.default(400, `User is ${user.isActive}`);
+    }
+    const isSamePassword = yield bcryptjs_1.default.compare(newPassword, user.password);
+    if (isSamePassword) {
+        throw new AppError_1.default(400, "New password must be different from old password");
+    }
+    user.password = yield bcryptjs_1.default.hash(newPassword, Number(env_1.envVars.BCRYPT_SALT_ROUND));
+    yield user.save();
+});
+const changePassword = (oldPassword, newPassword, decodedToken) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findById(decodedToken.userId);
+    if (!user) {
+        throw new AppError_1.default(400, "user not found");
+    }
+    const isOldPasswordMatch = yield bcryptjs_1.default.compare(oldPassword, user.password);
+    if (!isOldPasswordMatch) {
+        throw new AppError_1.default(401, "Old password does not match");
+    }
+    if (newPassword === oldPassword) {
+        throw new AppError_1.default(400, "New password must be different from old password");
+    }
+    const hashNewPassword = yield bcryptjs_1.default.hash(newPassword, Number(env_1.envVars.BCRYPT_SALT_ROUND));
+    user.password = hashNewPassword;
+    yield user.save();
+});
 exports.AuthServices = {
     credentialLogin,
     getNewAccessToken,
     resetPassword,
     forgotPassword,
     googleOAuthLogin,
+    resetPasswordWithToken,
+    changePassword,
 };

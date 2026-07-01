@@ -47,4 +47,14 @@ const handleWebhook = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 
         },
     });
 }));
-exports.PaymentControllers = { handleWebhook };
+const getMyPayments = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const decodedToken = req.user;
+    const payments = yield payment_service_1.PaymentServices.getMyPayments(decodedToken.userId);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: 200,
+        message: "Payment history retrieved successfully",
+        data: payments,
+    });
+}));
+exports.PaymentControllers = { handleWebhook, getMyPayments };

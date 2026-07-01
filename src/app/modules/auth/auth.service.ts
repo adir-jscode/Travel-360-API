@@ -141,7 +141,7 @@ const forgotPassword = async (email: string) => {
     expiresIn: "10m",
   });
 
-  const resetUILink = `${envVars.FRONTEND_URL}/reset-password?id=${isUserExist._id}&token=${resetToken}`;
+  const resetUILink = `${envVars.URL}/reset-password?id=${isUserExist._id}&token=${resetToken}`;
 
   await sendEmail({
     to: isUserExist.email,

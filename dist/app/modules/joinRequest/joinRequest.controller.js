@@ -41,8 +41,6 @@ const respondToRequest = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(vo
 /** GET /api/v1/join-request/incoming — requests for host's plans */
 const getIncomingRequests = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.user;
-    console.log("Incoming");
-    console.log({ userId });
     const data = yield joinRequest_service_1.JoinRequestServices.getRequestsForMyPlans(userId);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,

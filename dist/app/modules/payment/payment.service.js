@@ -95,4 +95,17 @@ const paymentSuccess = (stripeSession) => __awaiter(void 0, void 0, void 0, func
         session.endSession();
     }
 });
-exports.PaymentServices = { paymentSuccess };
+const getMyPayments = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const payments = yield payment_model_1.Payment.find({ user: userId })
+        .populate({
+        path: "subscription",
+        select: "plan status paidAt expiresAt subscriptionPlan",
+        populate: {
+            path: "subscriptionPlan",
+            select: "name title price duration",
+        },
+    })
+        .sort({ createdAt: -1 });
+    return payments;
+});
+exports.PaymentServices = { paymentSuccess, getMyPayments };
