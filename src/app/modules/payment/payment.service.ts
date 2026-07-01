@@ -113,6 +113,7 @@ const paymentSuccess = async (stripeSession: Stripe.Checkout.Session) => {
 };
 
 const getMyPayments = async (userId: string) => {
+  console.log({ userId });
   const payments = await Payment.find({ user: userId })
     .populate({
       path: "subscription",
@@ -123,7 +124,7 @@ const getMyPayments = async (userId: string) => {
       },
     })
     .sort({ createdAt: -1 });
-
+  console.log({ payments });
   return payments;
 };
 

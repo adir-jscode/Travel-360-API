@@ -3,6 +3,7 @@ import { AnalyticsRoutes } from "../modules/analytics/analytics.route";
 import { AuthRoutes } from "../modules/auth/auth.route";
 import { JoinRequestRoutes } from "../modules/joinRequest/joinRequest.route";
 import { NotificationRoutes } from "../modules/notification/notification.route";
+import { PaymentRoutes } from "../modules/payment/payment.route";
 import { ReviewRoutes } from "../modules/review/review.route";
 import { SubscriptionRoutes } from "../modules/subscription/subscription.route";
 import { SubscriptionPlanRoutes } from "../modules/subscriptionPlan/subscriptionPlan.route";
@@ -41,6 +42,7 @@ const moduleRoutes = [
   { path: "/trip", route: TripRoutes },
   { path: "/join-request", route: JoinRequestRoutes },
   { path: "/review", route: ReviewRoutes },
+  { path: "/payment", route: PaymentRoutes },
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));
