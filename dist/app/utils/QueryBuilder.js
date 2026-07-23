@@ -32,7 +32,6 @@ class QueryBuilder {
                 [field]: { $regex: searchTerm, $options: "i" },
             })),
         };
-        console.log("SEARCH QUERY:", JSON.stringify(searchQuery, null, 2)); // 👈
         this.modelQuery = this.modelQuery.find(searchQuery);
         return this;
     }

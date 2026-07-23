@@ -96,6 +96,7 @@ const paymentSuccess = (stripeSession) => __awaiter(void 0, void 0, void 0, func
     }
 });
 const getMyPayments = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log({ userId });
     const payments = yield payment_model_1.Payment.find({ user: userId })
         .populate({
         path: "subscription",
@@ -106,6 +107,7 @@ const getMyPayments = (userId) => __awaiter(void 0, void 0, void 0, function* ()
         },
     })
         .sort({ createdAt: -1 });
+    console.log({ payments });
     return payments;
 });
 exports.PaymentServices = { paymentSuccess, getMyPayments };

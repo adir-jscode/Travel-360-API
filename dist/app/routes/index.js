@@ -6,6 +6,7 @@ const analytics_route_1 = require("../modules/analytics/analytics.route");
 const auth_route_1 = require("../modules/auth/auth.route");
 const joinRequest_route_1 = require("../modules/joinRequest/joinRequest.route");
 const notification_route_1 = require("../modules/notification/notification.route");
+const payment_route_1 = require("../modules/payment/payment.route");
 const review_route_1 = require("../modules/review/review.route");
 const subscription_route_1 = require("../modules/subscription/subscription.route");
 const subscriptionPlan_route_1 = require("../modules/subscriptionPlan/subscriptionPlan.route");
@@ -42,5 +43,6 @@ const moduleRoutes = [
     { path: "/trip", route: trip_route_1.TripRoutes },
     { path: "/join-request", route: joinRequest_route_1.JoinRequestRoutes },
     { path: "/review", route: review_route_1.ReviewRoutes },
+    { path: "/payment", route: payment_route_1.PaymentRoutes },
 ];
 moduleRoutes.forEach((route) => exports.router.use(route.path, route.route));
